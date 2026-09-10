@@ -51,3 +51,18 @@ body {
   overflow: hidden;
 }
 
+/* Hide Netlify Drawer / Feedback badge / Powered by Netlify widget */
+#netlify-drawer,
+iframe#netlify-drawer,
+div#netlify-drawer,
+[data-netlify-drawer],
+.netlify-badge,
+iframe[src*="netlify"],
+div[class*="netlify-drawer"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+
