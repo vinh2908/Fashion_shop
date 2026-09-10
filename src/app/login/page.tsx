@@ -1,10 +1,10 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useShop } from "@/context/ShopContext";
-import { BiEnvelope, BiLockAlt, BiLogInCircle, BiInfoCircle } from "react-icons/bi";
+import { BiEnvelope, BiLockAlt, BiLogInCircle } from "react-icons/bi";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -25,15 +25,9 @@ export default function LoginPage() {
     }
   };
 
-  const fillAdmin = () => {
-    setEmail("admin@clothingshop.vn");
-    setPassword("Admin@123");
-  };
-
   return (
     <div className="container mx-auto px-4 py-16 flex justify-center items-center min-h-[75vh]">
       <div className="bg-white p-8 md:p-10 rounded-3xl shadow-xl border border-slate-100 w-full max-w-md relative overflow-hidden">
-        
         {/* Glow */}
         <div className="absolute -top-10 -right-10 w-36 h-36 bg-rose-500/10 rounded-full blur-2xl pointer-events-none" />
         <div className="absolute -bottom-10 -left-10 w-36 h-36 bg-blue-500/10 rounded-full blur-2xl pointer-events-none" />
@@ -46,21 +40,6 @@ export default function LoginPage() {
             Đăng Nhập
           </h1>
           <p className="text-slate-500 text-xs">Vui lòng đăng nhập để trải nghiệm mua sắm tốt nhất</p>
-        </div>
-
-        {/* Quick Demo Hint */}
-        <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-3.5 mb-6 text-xs text-slate-600 flex items-start gap-2.5">
-          <BiInfoCircle className="text-rose-500 text-lg flex-shrink-0 mt-0.5" />
-          <div className="flex-1">
-            <span>Tài khoản Admin mẫu: </span>
-            <button
-              type="button"
-              onClick={fillAdmin}
-              className="text-rose-600 font-bold hover:underline"
-            >
-              Click để tự điền (Admin@123)
-            </button>
-          </div>
         </div>
 
         <form onSubmit={handleLogin} className="relative z-10 space-y-4">
@@ -133,4 +112,3 @@ export default function LoginPage() {
     </div>
   );
 }
-

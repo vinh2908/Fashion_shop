@@ -7,7 +7,6 @@ import FloatingWidgets from "@/components/FloatingWidgets";
 import { ShopProvider } from "@/context/ShopContext";
 import ToastContainer from "@/components/ToastContainer";
 import QuickViewModal from "@/components/QuickViewModal";
-import SocialProofPopup from "@/components/SocialProofPopup";
 
 const plusJakartaSans = Plus_Jakarta_Sans({ 
   subsets: ["latin", "vietnamese"],
@@ -37,7 +36,6 @@ export default function RootLayout({
           <FloatingWidgets />
           <ToastContainer />
           <QuickViewModal />
-          <SocialProofPopup />
         </ShopProvider>
       </body>
     </html>
