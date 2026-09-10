@@ -212,7 +212,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 lg:px-8 py-10 min-h-[75vh]">
+    <div className="container mx-auto px-3 sm:px-4 lg:px-8 py-6 sm:py-10 pb-28 md:pb-12 min-h-[75vh]">
       {/* Breadcrumb */}
       <nav className="text-xs md:text-sm text-slate-500 mb-6 flex items-center gap-2">
         <Link href="/" className="hover:text-rose-600 transition">Trang chủ</Link>
@@ -222,7 +222,7 @@ export default function CheckoutPage() {
         <span className="text-slate-900 font-bold">Thanh toán</span>
       </nav>
 
-      <h1 className="text-2xl md:text-3xl font-black text-slate-900 mb-8 tracking-tight">
+      <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 mb-6 sm:mb-8 tracking-tight">
         Thanh Toán Đơn Hàng
       </h1>
 
@@ -234,13 +234,13 @@ export default function CheckoutPage() {
           </Link>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
           
           {/* Form Fields */}
           <div className="lg:col-span-7 space-y-6">
             
             {/* Step 1: Customer Info */}
-            <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100">
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-sm border border-slate-100">
               <h2 className="text-lg font-bold text-slate-900 mb-5 pb-3 border-b border-slate-100 flex items-center gap-2">
                 <span className="w-6 h-6 rounded-full bg-rose-600 text-white text-xs flex items-center justify-center font-black">
                   1

@@ -43,7 +43,7 @@ export default function OrderHistoryPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 lg:px-8 py-10 min-h-[75vh]">
+    <div className="container mx-auto px-3 sm:px-4 lg:px-8 py-6 sm:py-10 pb-24 min-h-[75vh]">
       {/* Breadcrumb */}
       <nav className="text-xs md:text-sm text-slate-500 mb-6 flex items-center gap-2">
         <Link href="/" className="hover:text-rose-600 transition">Trang chủ</Link>
@@ -53,15 +53,15 @@ export default function OrderHistoryPage() {
 
       {/* User Profile Card */}
       {user ? (
-        <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-500 to-rose-700 text-white font-black text-xl flex items-center justify-center shadow-md shadow-rose-600/30 flex-shrink-0">
+        <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm mb-6 sm:mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-rose-500 to-rose-700 text-white font-black text-lg sm:text-xl flex items-center justify-center shadow-md shadow-rose-600/30 flex-shrink-0">
               {user.fullName.charAt(0).toUpperCase()}
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-extrabold text-slate-900 text-base">{user.fullName}</h3>
-                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-600 border border-rose-200">
+                <h3 className="font-extrabold text-slate-900 text-sm sm:text-base">{user.fullName}</h3>
+                <span className="text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-600 border border-rose-200">
                   {user.role === "Admin" ? "Quản trị viên" : "Thành viên"}
                 </span>
               </div>
@@ -76,13 +76,13 @@ export default function OrderHistoryPage() {
               setProfileForm({ fullName: user.fullName, phone: user.phone || "" });
               setIsProfileModalOpen(true);
             }}
-            className="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:text-rose-600 hover:border-rose-300 font-bold text-xs flex items-center gap-2 transition bg-slate-50 hover:bg-white"
+            className="w-full sm:w-auto justify-center px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:text-rose-600 hover:border-rose-300 font-bold text-xs flex items-center gap-2 transition bg-slate-50 hover:bg-white"
           >
             <BiEdit className="text-base text-rose-500" /> Chỉnh sửa hồ sơ
           </button>
         </div>
       ) : (
-        <div className="bg-amber-50/80 border border-amber-200/80 rounded-2xl p-4 mb-8 flex items-center justify-between gap-4">
+        <div className="bg-amber-50/80 border border-amber-200/80 rounded-2xl p-4 mb-6 sm:mb-8 flex items-center justify-between gap-4">
           <div className="text-xs text-amber-800">
             💡 Bạn đang xem đơn hàng với tư cách khách vãng lai. Hãy <Link href="/login" className="font-bold underline text-rose-600">Đăng nhập</Link> để quản lý hồ sơ và cập nhật thông tin cá nhân.
           </div>
@@ -90,9 +90,9 @@ export default function OrderHistoryPage() {
       )}
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
         <div>
-          <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2">
             <BiHistory className="text-rose-600" /> Lịch Sử Đơn Hàng Của Bạn
           </h1>
           <p className="text-xs md:text-sm text-slate-500 mt-1">
@@ -101,7 +101,7 @@ export default function OrderHistoryPage() {
         </div>
 
         {/* Search */}
-        <div className="relative max-w-xs w-full">
+        <div className="relative max-w-full sm:max-w-xs w-full">
           <input
             type="text"
             value={searchQuery}
@@ -115,11 +115,11 @@ export default function OrderHistoryPage() {
 
       {/* Orders Table or Empty */}
       {filteredOrders.length === 0 ? (
-        <div className="bg-white rounded-3xl p-12 text-center border border-slate-100 shadow-sm max-w-md mx-auto">
-          <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center text-4xl text-slate-300 mx-auto mb-4">
+        <div className="bg-white rounded-3xl p-8 sm:p-12 text-center border border-slate-100 shadow-sm max-w-md mx-auto">
+          <div className="w-16 sm:w-20 h-16 sm:h-20 rounded-full bg-slate-100 flex items-center justify-center text-3xl sm:text-4xl text-slate-300 mx-auto mb-4">
             <BiPackage />
           </div>
-          <h3 className="text-lg font-bold text-slate-800 mb-1">Chưa có đơn hàng nào</h3>
+          <h3 className="text-base sm:text-lg font-bold text-slate-800 mb-1">Chưa có đơn hàng nào</h3>
           <p className="text-slate-500 text-xs mb-6">
             Bạn chưa thực hiện đơn đặt hàng nào hoặc không tìm thấy mã đơn tương ứng.
           </p>
@@ -131,65 +131,129 @@ export default function OrderHistoryPage() {
           </Link>
         </div>
       ) : (
-        <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="bg-slate-50 border-b border-slate-100 text-slate-400 uppercase font-black tracking-wider">
-                  <th className="py-4 px-6">Mã Đơn</th>
-                  <th className="py-4 px-6">Ngày Đặt</th>
-                  <th className="py-4 px-6">Sản Phẩm</th>
-                  <th className="py-4 px-6">Tổng Tiền</th>
-                  <th className="py-4 px-6">Trạng Thái</th>
-                  <th className="py-4 px-6 text-right">Chi Tiết</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 text-slate-700 font-medium">
-                {filteredOrders.map((order) => (
-                  <tr key={order.orderId} className="hover:bg-slate-50/70 transition">
-                    <td className="py-4 px-6 font-mono font-black text-slate-900 text-sm">
+        <>
+          {/* Mobile Order Cards */}
+          <div className="sm:hidden space-y-3.5">
+            {filteredOrders.map((order) => (
+              <div
+                key={order.orderId}
+                className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm space-y-3"
+              >
+                {/* Order Top Bar: ID + Status */}
+                <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100">
+                  <div>
+                    <span className="font-mono font-black text-slate-900 text-sm">
                       #{order.orderId}
-                    </td>
-                    <td className="py-4 px-6 text-slate-500">
+                    </span>
+                    <div className="text-[11px] text-slate-400 mt-0.5">
                       {order.createdAt}
-                    </td>
-                    <td className="py-4 px-6">
-                      <div className="flex items-center gap-2">
-                        {order.items.slice(0, 2).map((it, i) => (
-                          <img
-                            key={i}
-                            src={it.product.imageUrl}
-                            alt=""
-                            className="w-9 h-11 rounded-lg object-cover bg-slate-100"
-                          />
-                        ))}
-                        <span className="text-slate-500">
-                          {order.items.reduce((sum, item) => sum + item.quantity, 0)} món
-                        </span>
+                    </div>
+                  </div>
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${getStatusBadge(order.status)}`}>
+                    {order.status}
+                  </span>
+                </div>
+
+                {/* Items preview */}
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-1.5 overflow-hidden">
+                    {order.items.slice(0, 3).map((it, i) => (
+                      <img
+                        key={i}
+                        src={it.product.imageUrl}
+                        alt=""
+                        className="w-10 h-12 rounded-lg object-cover bg-slate-100 border border-slate-100 flex-shrink-0"
+                      />
+                    ))}
+                    {order.items.length > 3 && (
+                      <div className="w-10 h-12 rounded-lg bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-500 border border-slate-200 flex-shrink-0">
+                        +{order.items.length - 3}
                       </div>
-                    </td>
-                    <td className="py-4 px-6 font-extrabold text-rose-600 text-sm">
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <div className="text-[11px] text-slate-400">
+                      {order.items.reduce((sum, item) => sum + item.quantity, 0)} sản phẩm
+                    </div>
+                    <div className="font-black text-rose-600 text-sm mt-0.5">
                       {order.totalAmount.toLocaleString("vi-VN")}đ
-                    </td>
-                    <td className="py-4 px-6">
-                      <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold border ${getStatusBadge(order.status)}`}>
-                        {order.status}
-                      </span>
-                    </td>
-                    <td className="py-4 px-6 text-right">
-                      <button
-                        onClick={() => setSelectedOrder(order)}
-                        className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-900 hover:text-white transition font-bold text-xs"
-                      >
-                        Xem
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bottom Action */}
+                <button
+                  type="button"
+                  onClick={() => setSelectedOrder(order)}
+                  className="w-full py-2 bg-slate-50 hover:bg-slate-100 active:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl border border-slate-200 transition text-center"
+                >
+                  Xem chi tiết đơn hàng
+                </button>
+              </div>
+            ))}
           </div>
-        </div>
+
+          {/* Desktop Orders Table */}
+          <div className="hidden sm:block bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-slate-100 text-slate-400 uppercase font-black tracking-wider">
+                    <th className="py-4 px-6">Mã Đơn</th>
+                    <th className="py-4 px-6">Ngày Đặt</th>
+                    <th className="py-4 px-6">Sản Phẩm</th>
+                    <th className="py-4 px-6">Tổng Tiền</th>
+                    <th className="py-4 px-6">Trạng Thái</th>
+                    <th className="py-4 px-6 text-right">Chi Tiết</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 text-slate-700 font-medium">
+                  {filteredOrders.map((order) => (
+                    <tr key={order.orderId} className="hover:bg-slate-50/70 transition">
+                      <td className="py-4 px-6 font-mono font-black text-slate-900 text-sm">
+                        #{order.orderId}
+                      </td>
+                      <td className="py-4 px-6 text-slate-500">
+                        {order.createdAt}
+                      </td>
+                      <td className="py-4 px-6">
+                        <div className="flex items-center gap-2">
+                          {order.items.slice(0, 2).map((it, i) => (
+                            <img
+                              key={i}
+                              src={it.product.imageUrl}
+                              alt=""
+                              className="w-9 h-11 rounded-lg object-cover bg-slate-100"
+                            />
+                          ))}
+                          <span className="text-slate-500">
+                            {order.items.reduce((sum, item) => sum + item.quantity, 0)} món
+                          </span>
+                        </div>
+                      </td>
+                      <td className="py-4 px-6 font-extrabold text-rose-600 text-sm">
+                        {order.totalAmount.toLocaleString("vi-VN")}đ
+                      </td>
+                      <td className="py-4 px-6">
+                        <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold border ${getStatusBadge(order.status)}`}>
+                          {order.status}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6 text-right">
+                        <button
+                          onClick={() => setSelectedOrder(order)}
+                          className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-900 hover:text-white transition font-bold text-xs"
+                        >
+                          Xem
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </>
       )}
 
       {/* Order Detail Modal (Receipt Invoice Style) */}

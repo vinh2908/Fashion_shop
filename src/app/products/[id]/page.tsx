@@ -15,7 +15,8 @@ import {
   BiRefresh,
   BiStar,
   BiRightArrowAlt,
-  BiArrowBack
+  BiArrowBack,
+  BiPhone
 } from "react-icons/bi";
 
 export default function ProductDetailPage() {
@@ -69,9 +70,9 @@ export default function ProductDetailPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 lg:px-8 py-8 space-y-12">
+    <div className="container mx-auto px-4 lg:px-8 py-6 sm:py-8 space-y-8 sm:space-y-12 pb-32 md:pb-12">
       {/* Breadcrumb */}
-      <nav className="text-xs md:text-sm text-slate-500 flex items-center gap-2">
+      <nav className="text-xs md:text-sm text-slate-500 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none whitespace-nowrap">
         <Link href="/" className="hover:text-rose-600 transition">Trang chủ</Link>
         <span>/</span>
         <Link href="/products" className="hover:text-rose-600 transition">Sản phẩm</Link>
@@ -84,7 +85,7 @@ export default function ProductDetailPage() {
       </nav>
 
       {/* Main Product Box */}
-      <div className="bg-white rounded-3xl p-6 md:p-10 shadow-sm border border-slate-100">
+      <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-10 shadow-sm border border-slate-100">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           
           {/* Gallery Column */}
@@ -310,11 +311,11 @@ export default function ProductDetailPage() {
       </div>
 
       {/* Tabs: Description, Reviews, Shipping Policy */}
-      <div className="bg-white rounded-3xl p-6 md:p-10 shadow-sm border border-slate-100">
-        <div className="flex border-b border-slate-200 gap-6 mb-6">
+      <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-10 shadow-sm border border-slate-100">
+        <div className="flex border-b border-slate-200 gap-3 sm:gap-6 mb-6 overflow-x-auto pb-1 scrollbar-none -mx-2 px-2 whitespace-nowrap">
           <button
             onClick={() => setActiveTab("desc")}
-            className={`pb-3 text-sm font-bold transition border-b-2 ${
+            className={`pb-3 text-xs sm:text-sm font-bold transition border-b-2 flex-shrink-0 ${
               activeTab === "desc"
                 ? "border-rose-600 text-rose-600"
                 : "border-transparent text-slate-500 hover:text-slate-800"
@@ -324,7 +325,7 @@ export default function ProductDetailPage() {
           </button>
           <button
             onClick={() => setActiveTab("reviews")}
-            className={`pb-3 text-sm font-bold transition border-b-2 ${
+            className={`pb-3 text-xs sm:text-sm font-bold transition border-b-2 flex-shrink-0 ${
               activeTab === "reviews"
                 ? "border-rose-600 text-rose-600"
                 : "border-transparent text-slate-500 hover:text-slate-800"
@@ -334,7 +335,7 @@ export default function ProductDetailPage() {
           </button>
           <button
             onClick={() => setActiveTab("shipping")}
-            className={`pb-3 text-sm font-bold transition border-b-2 ${
+            className={`pb-3 text-xs sm:text-sm font-bold transition border-b-2 flex-shrink-0 ${
               activeTab === "shipping"
                 ? "border-rose-600 text-rose-600"
                 : "border-transparent text-slate-500 hover:text-slate-800"
@@ -561,6 +562,57 @@ export default function ProductDetailPage() {
           </div>
         </section>
       )}
+
+      {/* Mobile Sticky Bottom Action Bar */}
+      <div className="fixed bottom-14 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-t border-slate-200/80 p-2.5 px-3 md:hidden shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
+        <div className="flex items-center justify-between gap-2 max-w-md mx-auto">
+          {/* Quick buttons: Wishlist & Hotline */}
+          <div className="flex items-center gap-1.5 flex-shrink-0">
+            <button
+              type="button"
+              onClick={() => toggleWishlist(product.id)}
+              className={`w-10 h-10 rounded-xl border flex items-center justify-center transition ${
+                isWishlisted(product.id)
+                  ? "border-rose-200 bg-rose-50 text-rose-600"
+                  : "border-slate-200 text-slate-600 active:bg-slate-100"
+              }`}
+              aria-label="Yêu thích"
+            >
+              {isWishlisted(product.id) ? (
+                <BiSolidHeart className="text-xl text-rose-600" />
+              ) : (
+                <BiHeart className="text-xl" />
+              )}
+            </button>
+            <a
+              href="tel:19001234"
+              className="w-10 h-10 rounded-xl border border-slate-200 text-slate-600 hover:text-emerald-600 hover:border-emerald-200 flex items-center justify-center transition active:bg-slate-100"
+              aria-label="Gọi hotline hỗ trợ"
+            >
+              <BiPhone className="text-xl" />
+            </a>
+          </div>
+
+          {/* Action buttons: Add to Cart & Buy Now */}
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              className="flex-1 py-2.5 px-2 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold text-xs rounded-xl flex items-center justify-center gap-1 transition active:scale-95 whitespace-nowrap"
+            >
+              <BiShoppingBag className="text-base flex-shrink-0" />
+              <span>Thêm giỏ</span>
+            </button>
+            <Link
+              href="/cart"
+              onClick={handleAddToCart}
+              className="flex-1 py-2.5 px-2 bg-gradient-to-r from-rose-600 to-pink-600 active:opacity-90 text-white font-bold text-xs rounded-xl flex items-center justify-center shadow-md shadow-rose-600/30 transition active:scale-95 whitespace-nowrap text-center"
+            >
+              <span>Mua ngay</span>
+            </Link>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

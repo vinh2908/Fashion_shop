@@ -8,6 +8,8 @@ import { ShopProvider } from "@/context/ShopContext";
 import ToastContainer from "@/components/ToastContainer";
 import QuickViewModal from "@/components/QuickViewModal";
 
+import MobileBottomNav from "@/components/MobileBottomNav";
+
 const plusJakartaSans = Plus_Jakarta_Sans({ 
   subsets: ["latin", "vietnamese"],
   weight: ["300", "400", "500", "600", "700", "800"],
@@ -51,11 +53,12 @@ export default function RootLayout({
       <body className={`${plusJakartaSans.variable} font-sans antialiased bg-slate-50 text-slate-900 flex flex-col min-h-screen selection:bg-rose-500 selection:text-white`}>
         <ShopProvider>
           <Navbar />
-          <main className="flex-grow">
+          <main className="flex-grow pb-16 md:pb-0">
             {children}
           </main>
           <Footer />
           <FloatingWidgets />
+          <MobileBottomNav />
           <ToastContainer />
           <QuickViewModal />
         </ShopProvider>

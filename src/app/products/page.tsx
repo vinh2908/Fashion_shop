@@ -260,26 +260,53 @@ function ProductsContent() {
         {/* Products Display Area */}
         <div className="flex-1 min-w-0">
           
+          {/* Mobile Quick Category Chips (Horizontal Swipe) */}
+          <div className="lg:hidden flex items-center gap-2 overflow-x-auto pb-3 mb-3 -mx-4 px-4 scrollbar-none">
+            <button
+              onClick={() => handleCategorySelect(0)}
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition flex-shrink-0 ${
+                selectedCategory === 0
+                  ? "bg-rose-600 text-white shadow-md shadow-rose-600/30"
+                  : "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50"
+              }`}
+            >
+              Tất cả ({allProducts.length})
+            </button>
+            {allCategories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => handleCategorySelect(cat.id)}
+                className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition flex-shrink-0 ${
+                  selectedCategory === cat.id
+                    ? "bg-rose-600 text-white shadow-md shadow-rose-600/30"
+                    : "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50"
+                }`}
+              >
+                {cat.name}
+              </button>
+            ))}
+          </div>
+
           {/* Top Control Bar */}
-          <div className="bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-slate-100 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="bg-white p-3.5 sm:p-5 rounded-2xl shadow-sm border border-slate-100 mb-4 sm:mb-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
             <div>
-              <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
+              <h1 className="text-lg sm:text-2xl font-black text-slate-900 tracking-tight">
                 {selectedCategory > 0
                   ? CATEGORIES.find((c) => c.id === selectedCategory)?.name
                   : "Tất Cả Sản Phẩm"}
               </h1>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">
                 Hiển thị <strong className="text-slate-800">{filteredProducts.length}</strong> sản phẩm phù hợp
               </p>
             </div>
 
             {/* Actions Bar */}
-            <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+            <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
               
               {/* Mobile Filter Drawer Button */}
               <button
                 onClick={() => setIsMobileFilterOpen(true)}
-                className="lg:hidden flex items-center gap-1.5 px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition"
+                className="lg:hidden flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 h-10 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition active:scale-95"
               >
                 <BiFilterAlt className="text-rose-600 text-base" /> Bộ lọc
                 {(selectedCategory > 0 || selectedPrice !== "all" || searchQuery) && (
@@ -291,7 +318,7 @@ function ProductsContent() {
               <select
                 value={selectedSort}
                 onChange={(e) => setSelectedSort(e.target.value)}
-                className="bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 rounded-xl px-3 py-2 focus:outline-none focus:border-rose-500 transition"
+                className="flex-1 sm:flex-initial bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 rounded-xl px-3 h-10 focus:outline-none focus:border-rose-500 transition cursor-pointer"
               >
                 <option value="created_desc">Mới nhất</option>
                 <option value="price_asc">Giá: Thấp đến Cao</option>
@@ -300,7 +327,7 @@ function ProductsContent() {
               </select>
 
               {/* View Toggle */}
-              <div className="flex items-center bg-slate-100 p-1 rounded-xl">
+              <div className="flex items-center bg-slate-100 p-1 rounded-xl h-10">
                 <button
                   onClick={() => setViewMode("grid")}
                   className={`p-1.5 rounded-lg transition ${
@@ -522,31 +549,31 @@ function ProductsContent() {
                       </div>
                     </div>
 
-                    <div className="p-4 flex flex-col flex-1">
-                      <div className="text-[11px] font-bold text-slate-400 uppercase mb-1">
+                    <div className="p-3 sm:p-4 flex flex-col flex-1">
+                      <div className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">
                         {product.categoryName}
                       </div>
 
-                      <h3 className="font-bold text-slate-900 text-sm mb-2 line-clamp-2 hover:text-rose-600 transition leading-snug">
+                      <h3 className="font-bold text-slate-900 text-xs sm:text-sm mb-1.5 line-clamp-2 hover:text-rose-600 transition leading-snug min-h-[32px] sm:min-h-[36px]">
                         <Link href={`/products/${product.id}`}>{product.name}</Link>
                       </h3>
 
-                      <div className="flex items-center gap-1 text-amber-400 text-xs mb-3">
+                      <div className="flex items-center gap-1 text-amber-400 text-xs mb-2.5">
                         <BiStar />
                         <span className="font-bold text-slate-700">{product.rating}</span>
                         <span className="text-slate-400">({product.reviewCount})</span>
                       </div>
 
-                      <div className="mt-auto pt-2 border-t border-slate-50 flex items-center justify-between">
-                        <span className="text-base font-extrabold text-rose-600">
+                      <div className="mt-auto pt-2 border-t border-slate-50 flex items-center justify-between gap-1.5">
+                        <span className="text-xs sm:text-base font-extrabold text-rose-600 truncate">
                           {product.price.toLocaleString("vi-VN")}đ
                         </span>
                         <button
                           onClick={() => addToCart(product, 1, product.sizes[0], product.colors[0])}
-                          className="p-2 rounded-xl bg-slate-100 hover:bg-rose-600 hover:text-white text-slate-700 transition"
+                          className="p-2 sm:p-2.5 rounded-xl bg-slate-100 hover:bg-rose-600 hover:text-white text-slate-700 transition flex-shrink-0 active:scale-95"
                           title="Thêm vào giỏ"
                         >
-                          <BiShoppingBag className="text-lg" />
+                          <BiShoppingBag className="text-base sm:text-lg" />
                         </button>
                       </div>
                     </div>
@@ -575,97 +602,109 @@ function ProductsContent() {
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "tween", duration: 0.3 }}
-              className="relative w-4/5 max-w-xs bg-white h-full z-10 p-6 flex flex-col overflow-y-auto shadow-2xl"
+              className="relative w-[85%] max-w-xs bg-white h-full z-10 flex flex-col justify-between shadow-2xl overflow-hidden"
             >
-              <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
-                <h3 className="font-bold text-lg text-slate-900 flex items-center gap-2">
-                  <BiFilterAlt className="text-rose-600" /> Bộ lọc
-                </h3>
+              {/* Header */}
+              <div className="p-5 flex items-center justify-between border-b border-slate-100 flex-shrink-0">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-lg">
+                    <BiFilterAlt />
+                  </div>
+                  <h3 className="font-black text-base text-slate-900">Bộ Lọc Sản Phẩm</h3>
+                </div>
                 <button
                   onClick={() => setIsMobileFilterOpen(false)}
-                  className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500"
+                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 transition"
+                  aria-label="Đóng bộ lọc"
                 >
                   <BiX className="text-xl" />
                 </button>
               </div>
 
-              {/* Categories */}
-              <div className="mb-6">
-                <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400 mb-3">
-                  Danh Mục
-                </h4>
-                <ul className="space-y-1">
-                  <li>
+              {/* Scrollable Body */}
+              <div className="p-5 space-y-6 overflow-y-auto flex-1">
+                {/* Categories */}
+                <div>
+                  <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400 mb-2.5">
+                    Danh Mục Sản Phẩm
+                  </h4>
+                  <div className="space-y-1">
                     <button
-                      onClick={() => {
-                        handleCategorySelect(0);
-                        setIsMobileFilterOpen(false);
-                      }}
-                      className={`w-full text-left px-3 py-2 rounded-xl text-sm font-semibold ${
-                        selectedCategory === 0 ? "bg-rose-50 text-rose-600 font-bold" : "text-slate-700"
+                      onClick={() => handleCategorySelect(0)}
+                      className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center justify-between ${
+                        selectedCategory === 0
+                          ? "bg-rose-50 text-rose-600 font-bold border border-rose-200"
+                          : "text-slate-700 hover:bg-slate-50"
                       }`}
                     >
-                      Tất cả danh mục ({allProducts.length})
+                      <span>Tất cả danh mục</span>
+                      <span className="text-[10px] text-slate-400">{allProducts.length}</span>
                     </button>
-                  </li>
-                  {allCategories.map((cat) => (
-                    <li key={cat.id}>
+                    {allCategories.map((cat) => (
                       <button
-                        onClick={() => {
-                          handleCategorySelect(cat.id);
-                          setIsMobileFilterOpen(false);
-                        }}
-                        className={`w-full text-left px-3 py-2 rounded-xl text-sm font-semibold ${
-                          selectedCategory === cat.id ? "bg-rose-50 text-rose-600 font-bold" : "text-slate-700"
+                        key={cat.id}
+                        onClick={() => handleCategorySelect(cat.id)}
+                        className={`w-full text-left px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center justify-between ${
+                          selectedCategory === cat.id
+                            ? "bg-rose-50 text-rose-600 font-bold border border-rose-200"
+                            : "text-slate-700 hover:bg-slate-50"
                         }`}
                       >
-                        {cat.name} ({allProducts.filter((p) => p.category === cat.id).length})
+                        <span className="truncate">{cat.name}</span>
+                        <span className="text-[10px] text-slate-400 flex-shrink-0">
+                          {allProducts.filter((p) => p.category === cat.id).length}
+                        </span>
                       </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                    ))}
+                  </div>
+                </div>
 
-              {/* Price */}
-              <div className="mb-6 pt-5 border-t border-slate-100">
-                <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400 mb-3">
-                  Khoảng Giá
-                </h4>
-                <div className="space-y-2 text-sm text-slate-700">
-                  {[
-                    { value: "all", label: "Tất cả mức giá" },
-                    { value: "under500", label: "Dưới 500.000đ" },
-                    { value: "500to1500", label: "500.000đ - 1.500.000đ" },
-                    { value: "above1500", label: "Trên 1.500.000đ" },
-                  ].map((item) => (
-                    <label key={item.value} className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="mobile-price"
-                        value={item.value}
-                        checked={selectedPrice === item.value}
-                        onChange={() => {
-                          setSelectedPrice(item.value);
-                          setIsMobileFilterOpen(false);
-                        }}
-                        className="text-rose-600 focus:ring-rose-500"
-                      />
-                      <span>{item.label}</span>
-                    </label>
-                  ))}
+                {/* Price */}
+                <div className="pt-4 border-t border-slate-100">
+                  <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400 mb-2.5">
+                    Khoảng Giá
+                  </h4>
+                  <div className="space-y-2 text-xs text-slate-700">
+                    {[
+                      { value: "all", label: "Tất cả mức giá" },
+                      { value: "under500", label: "Dưới 500.000đ" },
+                      { value: "500to1500", label: "500.000đ - 1.500.000đ" },
+                      { value: "above1500", label: "Trên 1.500.000đ" },
+                    ].map((item) => (
+                      <label key={item.value} className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-50 cursor-pointer transition">
+                        <input
+                          type="radio"
+                          name="mobile-price"
+                          value={item.value}
+                          checked={selectedPrice === item.value}
+                          onChange={() => setSelectedPrice(item.value)}
+                          className="text-rose-600 focus:ring-rose-500 w-4 h-4"
+                        />
+                        <span className={selectedPrice === item.value ? "font-bold text-rose-600" : ""}>
+                          {item.label}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              {/* Reset button */}
-              <div className="mt-auto pt-4 border-t border-slate-100">
+              {/* Sticky Action Footer */}
+              <div className="p-4 border-t border-slate-100 bg-slate-50 flex gap-2.5 flex-shrink-0">
                 <button
                   onClick={() => {
                     resetFilters();
                     setIsMobileFilterOpen(false);
                   }}
-                  className="w-full py-3 bg-slate-900 text-white font-bold rounded-xl text-sm"
+                  className="flex-1 py-2.5 px-3 border border-slate-200 bg-white text-slate-700 font-bold rounded-xl text-xs hover:bg-slate-100 transition"
                 >
                   Xóa bộ lọc
+                </button>
+                <button
+                  onClick={() => setIsMobileFilterOpen(false)}
+                  className="flex-1 py-2.5 px-3 bg-rose-600 text-white font-bold rounded-xl text-xs shadow-md shadow-rose-600/30 transition hover:bg-rose-700"
+                >
+                  Áp dụng
                 </button>
               </div>
             </motion.div>

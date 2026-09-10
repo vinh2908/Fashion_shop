@@ -21,6 +21,7 @@ import {
   BiCheck,
   BiEdit,
   BiX,
+  BiGrid,
 } from "react-icons/bi";
 import { FaTruck } from "react-icons/fa";
 
@@ -88,30 +89,30 @@ export default function Home() {
   const displayTabProducts = activeTab === "bestseller" ? bestSellers : newArrivals;
 
   return (
-    <div className="space-y-16 pb-16">
+    <div className="space-y-10 sm:space-y-16 pb-16 overflow-x-hidden">
       
       {/* Hero Section */}
-      <section className="relative bg-slate-950 text-white overflow-hidden py-12 md:py-24">
+      <section className="relative bg-slate-950 text-white overflow-hidden py-10 md:py-24">
         {/* Ambient Glows */}
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-rose-600/20 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-10 w-96 h-96 bg-indigo-600/15 rounded-full blur-3xl pointer-events-none" />
 
         <div className="container mx-auto px-4 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             
             {/* Hero Left Content */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
-              className="lg:col-span-7 space-y-6 text-center lg:text-left"
+              className="lg:col-span-7 space-y-4 sm:space-y-6 text-center lg:text-left"
             >
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-rose-500/20 border border-rose-500/30 text-rose-400 text-xs md:text-sm font-bold">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-rose-500/20 border border-rose-500/30 text-rose-400 text-xs sm:text-sm font-bold">
                 <BiStar className="text-yellow-400" />
-                <span>BỘ SƯU TẬP THIẾT BỊ GIA DỤNG CAO CẤP 2026</span>
+                <span>BỘ SƯU TẬP GIA DỤNG CAO CẤP 2026</span>
               </div>
 
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-[1.15]">
+              <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight leading-[1.2]">
                 Không Gian Sống & <br />
                 <span className="bg-gradient-to-r from-rose-400 via-pink-400 to-amber-300 bg-clip-text text-transparent">
                   Tiện Nghi Hiện Đại
@@ -119,40 +120,40 @@ export default function Home() {
                 Cho Mọi Gia Đình
               </h1>
 
-              <p className="text-slate-300 text-base md:text-lg max-w-xl mx-auto lg:mx-0 leading-relaxed">
+              <p className="text-slate-300 text-sm sm:text-base md:text-lg max-w-xl mx-auto lg:mx-0 leading-relaxed">
                 Khám phá hệ sinh thái thiết bị nhà bếp và đồ gia dụng thông minh đỉnh cao. Tối ưu thời gian nội trợ, nâng tầm chất lượng cuộc sống cho tổ ấm của bạn.
               </p>
 
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3 sm:gap-4 pt-2">
                 <Link
                   href="/products"
-                  className="bg-rose-600 hover:bg-rose-700 text-white font-bold px-8 py-3.5 rounded-xl shadow-xl shadow-rose-600/30 flex items-center gap-2 transition transform hover:-translate-y-0.5"
+                  className="bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 sm:py-3.5 px-6 sm:px-8 rounded-xl shadow-xl shadow-rose-600/30 flex items-center justify-center gap-2 transition transform hover:-translate-y-0.5 text-sm sm:text-base"
                 >
                   <BiShoppingBag className="text-xl" /> Mua sắm ngay
                 </Link>
                 <a
                   href="#flashSaleSection"
-                  className="bg-white/10 hover:bg-white/15 border border-white/20 text-white font-bold px-7 py-3.5 rounded-xl flex items-center gap-2 transition backdrop-blur-sm"
+                  className="bg-white/10 hover:bg-white/15 border border-white/20 text-white font-bold py-3 sm:py-3.5 px-6 sm:px-7 rounded-xl flex items-center justify-center gap-2 transition backdrop-blur-sm text-sm sm:text-base"
                 >
                   <BiSolidBolt className="text-yellow-400 text-xl" /> Săn Flash Sale
                 </a>
               </div>
 
               {/* Stats Bar */}
-              <div className="grid grid-cols-3 gap-4 pt-6 border-t border-white/10 max-w-md mx-auto lg:mx-0">
+              <div className="grid grid-cols-3 gap-2 sm:gap-4 pt-5 sm:pt-6 border-t border-white/10 max-w-md mx-auto lg:mx-0">
                 <div>
-                  <div className="text-2xl md:text-3xl font-black text-white">50K+</div>
-                  <div className="text-xs text-slate-400">Gia đình tin dùng</div>
+                  <div className="text-xl sm:text-3xl font-black text-white">50K+</div>
+                  <div className="text-[11px] sm:text-xs text-slate-400">Gia đình tin dùng</div>
                 </div>
                 <div>
-                  <div className="text-2xl md:text-3xl font-black text-white">100+</div>
-                  <div className="text-xs text-slate-400">Thiết bị thông minh</div>
+                  <div className="text-xl sm:text-3xl font-black text-white">100+</div>
+                  <div className="text-[11px] sm:text-xs text-slate-400">Thiết bị thông minh</div>
                 </div>
                 <div>
-                  <div className="text-2xl md:text-3xl font-black text-amber-400 flex items-center justify-center lg:justify-start gap-1">
+                  <div className="text-xl sm:text-3xl font-black text-amber-400 flex items-center justify-center lg:justify-start gap-1">
                     4.9 <BiStar className="text-amber-400" />
                   </div>
-                  <div className="text-xs text-slate-400">Đánh giá 5 sao</div>
+                  <div className="text-[11px] sm:text-xs text-slate-400">Đánh giá 5 sao</div>
                 </div>
               </div>
             </motion.div>
@@ -162,7 +163,7 @@ export default function Home() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="lg:col-span-5 relative"
+              className="lg:col-span-5 relative mt-4 lg:mt-0"
             >
               <div className="relative mx-auto max-w-md">
                 <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border border-white/10">
@@ -173,21 +174,21 @@ export default function Home() {
                   />
                 </div>
 
-                {/* Floating Authentic Badge */}
-                <div className="absolute -bottom-6 -left-6 bg-slate-900/95 border border-slate-700/80 backdrop-blur-md p-4 rounded-2xl shadow-xl flex items-center gap-3 text-white">
-                  <div className="w-12 h-12 rounded-xl bg-yellow-500/20 text-yellow-400 flex items-center justify-center text-2xl flex-shrink-0">
+                {/* Floating Authentic Badge (responsive bounds to avoid horizontal overflow) */}
+                <div className="absolute -bottom-3 left-2 sm:-bottom-6 sm:-left-6 bg-slate-900/95 border border-slate-700/80 backdrop-blur-md p-3 sm:p-4 rounded-xl sm:rounded-2xl shadow-xl flex items-center gap-2.5 sm:gap-3 text-white max-w-[220px] sm:max-w-none">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-yellow-500/20 text-yellow-400 flex items-center justify-center text-xl sm:text-2xl flex-shrink-0">
                     <BiCheckShield />
                   </div>
                   <div>
-                    <div className="font-bold text-sm">100% Chính Hãng</div>
-                    <div className="text-xs text-slate-400">Bảo hành 12 - 24 tháng</div>
+                    <div className="font-bold text-xs sm:text-sm">100% Chính Hãng</div>
+                    <div className="text-[10px] sm:text-xs text-slate-400">Bảo hành 12 - 24 tháng</div>
                   </div>
                 </div>
 
                 {/* Floating Discount Tag */}
-                <div className="absolute -top-4 -right-4 bg-rose-600 text-white p-3.5 rounded-2xl shadow-xl font-black text-center rotate-6">
-                  <div className="text-xs uppercase tracking-wider">GIẢM ĐẾN</div>
-                  <div className="text-2xl">50%</div>
+                <div className="absolute top-2 right-2 sm:-top-4 sm:-right-4 bg-rose-600 text-white p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl shadow-xl font-black text-center rotate-6">
+                  <div className="text-[10px] sm:text-xs uppercase tracking-wider">GIẢM ĐẾN</div>
+                  <div className="text-lg sm:text-2xl">50%</div>
                 </div>
               </div>
             </motion.div>
@@ -196,47 +197,82 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Mobile Quick Category Scroller */}
+      <section className="container mx-auto px-4 lg:px-8 md:hidden">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-extrabold text-sm text-slate-900">Danh mục nổi bật</h3>
+          <Link href="/products" className="text-xs text-rose-600 font-bold flex items-center gap-0.5">
+            Tất cả <BiRightArrowAlt className="text-base" />
+          </Link>
+        </div>
+        <div className="flex items-center gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-none">
+          <Link
+            href="/products"
+            className="flex flex-col items-center gap-1.5 p-2.5 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex-shrink-0 min-w-[76px] active:scale-95 transition"
+          >
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-rose-500 to-rose-700 text-white flex items-center justify-center text-2xl shadow-md shadow-rose-600/30">
+              <BiGrid />
+            </div>
+            <span className="text-[11px] font-bold text-slate-800 text-center truncate max-w-[70px]">Tất cả</span>
+          </Link>
+          {(pinnedCategories.length > 0 ? pinnedCategories : CATEGORIES).map((cat) => (
+            <Link
+              key={cat.id}
+              href={`/products?cat=${cat.id}`}
+              className="flex flex-col items-center gap-1.5 p-2.5 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex-shrink-0 min-w-[76px] active:scale-95 transition"
+            >
+              <div className="w-12 h-12 rounded-xl overflow-hidden bg-slate-100 flex-shrink-0 relative border border-slate-100 shadow-sm">
+                <img src={cat.imageUrl} alt={cat.name} className="w-full h-full object-cover" />
+              </div>
+              <span className="text-[11px] font-bold text-slate-800 text-center truncate max-w-[70px]">
+                {cat.name}
+              </span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       {/* Trust & Service Strip */}
       <section className="container mx-auto px-4 lg:px-8">
-        <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-100">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl flex-shrink-0">
+        <div className="bg-white rounded-2xl p-4 sm:p-6 md:p-8 shadow-sm border border-slate-100">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl sm:text-2xl flex-shrink-0">
                 <FaTruck />
               </div>
               <div>
-                <h4 className="font-bold text-slate-900 text-sm md:text-base">Giao hàng siêu tốc</h4>
-                <p className="text-xs text-slate-500">Toàn quốc từ 1 - 2 ngày</p>
+                <h4 className="font-bold text-slate-900 text-xs sm:text-sm md:text-base">Giao hàng siêu tốc</h4>
+                <p className="text-[11px] sm:text-xs text-slate-500">Toàn quốc 1 - 2 ngày</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl flex-shrink-0">
-                <BiRefresh className="text-3xl" />
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl sm:text-3xl flex-shrink-0">
+                <BiRefresh />
               </div>
               <div>
-                <h4 className="font-bold text-slate-900 text-sm md:text-base">Đổi trả 30 ngày</h4>
-                <p className="text-xs text-slate-500">Đổi hàng miễn phí tận nơi</p>
+                <h4 className="font-bold text-slate-900 text-xs sm:text-sm md:text-base">Đổi trả 30 ngày</h4>
+                <p className="text-[11px] sm:text-xs text-slate-500">Miễn phí tận nơi</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-2xl flex-shrink-0">
-                <BiCheckCircle className="text-3xl" />
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-2xl sm:text-3xl flex-shrink-0">
+                <BiCheckCircle />
               </div>
               <div>
-                <h4 className="font-bold text-slate-900 text-sm md:text-base">100% Chính hãng</h4>
-                <p className="text-xs text-slate-500">Bảo hành 12 - 24 tháng</p>
+                <h4 className="font-bold text-slate-900 text-xs sm:text-sm md:text-base">100% Chính hãng</h4>
+                <p className="text-[11px] sm:text-xs text-slate-500">Bảo hành 12 - 24T</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl flex-shrink-0">
-                <BiHeadphone className="text-3xl" />
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl sm:text-3xl flex-shrink-0">
+                <BiHeadphone />
               </div>
               <div>
-                <h4 className="font-bold text-slate-900 text-sm md:text-base">Hỗ trợ tận tâm</h4>
-                <p className="text-xs text-slate-500">Hotline 1900 1234 (24/7)</p>
+                <h4 className="font-bold text-slate-900 text-xs sm:text-sm md:text-base">Hỗ trợ tận tâm</h4>
+                <p className="text-[11px] sm:text-xs text-slate-500">Hotline 1900 1234</p>
               </div>
             </div>
           </div>
@@ -245,52 +281,52 @@ export default function Home() {
 
       {/* Flash Sale Section with Countdown Timer */}
       <section id="flashSaleSection" className="container mx-auto px-4 lg:px-8">
-        <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white rounded-3xl p-6 md:p-10 shadow-xl border border-slate-800 relative overflow-hidden">
+        <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-10 shadow-xl border border-slate-800 relative overflow-hidden">
           
           {/* Header & Countdown */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-800">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 sm:pb-6 border-b border-slate-800">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-rose-600 flex items-center justify-center text-white text-3xl shadow-lg shadow-rose-600/40">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-rose-600 flex items-center justify-center text-white text-2xl sm:text-3xl shadow-lg shadow-rose-600/40 flex-shrink-0">
                 <BiSolidBolt />
               </div>
               <div>
-                <h2 className="text-2xl md:text-3xl font-black text-white">FLASH SALE GIỜ VÀNG</h2>
-                <p className="text-xs md:text-sm text-slate-400">Số lượng có hạn trong hôm nay, đừng bỏ lỡ!</p>
+                <h2 className="text-lg sm:text-2xl md:text-3xl font-black text-white">FLASH SALE GIỜ VÀNG</h2>
+                <p className="text-[11px] sm:text-xs md:text-sm text-slate-400">Số lượng có hạn trong hôm nay, đừng bỏ lỡ!</p>
               </div>
             </div>
 
             {/* Countdown Clock */}
-            <div className="flex items-center gap-3">
-              <span className="text-xs uppercase font-bold text-slate-400 tracking-wider hidden sm:inline">
+            <div className="flex items-center justify-between sm:justify-end gap-2.5">
+              <span className="text-[11px] sm:text-xs uppercase font-bold text-slate-400 tracking-wider">
                 KẾT THÚC TRONG:
               </span>
-              <div className="flex items-center gap-2 font-mono">
-                <div className="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-center min-w-[50px]">
-                  <div className="text-xl md:text-2xl font-black text-rose-500">
+              <div className="flex items-center gap-1.5 sm:gap-2 font-mono">
+                <div className="bg-slate-800 border border-slate-700 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1 sm:py-2 text-center min-w-[40px] sm:min-w-[50px]">
+                  <div className="text-lg sm:text-2xl font-black text-rose-500">
                     {String(timeLeft.hours).padStart(2, "0")}
                   </div>
-                  <div className="text-[10px] text-slate-400 uppercase">Giờ</div>
+                  <div className="text-[9px] sm:text-[10px] text-slate-400 uppercase">Giờ</div>
                 </div>
-                <span className="text-xl font-bold text-slate-500">:</span>
-                <div className="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-center min-w-[50px]">
-                  <div className="text-xl md:text-2xl font-black text-rose-500">
+                <span className="text-lg sm:text-xl font-bold text-slate-500">:</span>
+                <div className="bg-slate-800 border border-slate-700 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1 sm:py-2 text-center min-w-[40px] sm:min-w-[50px]">
+                  <div className="text-lg sm:text-2xl font-black text-rose-500">
                     {String(timeLeft.minutes).padStart(2, "0")}
                   </div>
-                  <div className="text-[10px] text-slate-400 uppercase">Phút</div>
+                  <div className="text-[9px] sm:text-[10px] text-slate-400 uppercase">Phút</div>
                 </div>
-                <span className="text-xl font-bold text-slate-500">:</span>
-                <div className="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-center min-w-[50px]">
-                  <div className="text-xl md:text-2xl font-black text-rose-500">
+                <span className="text-lg sm:text-xl font-bold text-slate-500">:</span>
+                <div className="bg-slate-800 border border-slate-700 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1 sm:py-2 text-center min-w-[40px] sm:min-w-[50px]">
+                  <div className="text-lg sm:text-2xl font-black text-rose-500">
                     {String(timeLeft.seconds).padStart(2, "0")}
                   </div>
-                  <div className="text-[10px] text-slate-400 uppercase">Giây</div>
+                  <div className="text-[9px] sm:text-[10px] text-slate-400 uppercase">Giây</div>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Flash Sale Product Cards Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mt-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mt-5 sm:mt-8">
             {flashSaleProducts.map((product) => {
               const discountPercent = Math.round(
                 ((product.originalPrice - product.price) / product.originalPrice) * 100
@@ -312,15 +348,15 @@ export default function Home() {
                     </Link>
 
                     {/* Badge */}
-                    <span className="absolute top-2.5 left-2.5 bg-rose-600 text-white text-[11px] font-black px-2.5 py-1 rounded-full shadow">
-                      SALE -{discountPercent}%
+                    <span className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 bg-rose-600 text-white text-[10px] sm:text-[11px] font-black px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full shadow">
+                      -{discountPercent}%
                     </span>
 
                     {/* Overlay Action Buttons */}
-                    <div className="absolute top-2.5 right-2.5 flex flex-col gap-2">
+                    <div className="absolute top-2 right-2 sm:top-2.5 sm:right-2.5 flex flex-col gap-1.5 sm:gap-2">
                       <button
                         onClick={() => toggleWishlist(product.id)}
-                        className={`w-9 h-9 rounded-full flex items-center justify-center shadow-md transition ${
+                        className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center shadow-md transition ${
                           isWishlisted(product.id)
                             ? "bg-rose-500 text-white"
                             : "bg-white/90 hover:bg-white text-slate-700 hover:text-rose-600"
@@ -332,41 +368,41 @@ export default function Home() {
 
                       <button
                         onClick={() => openQuickView(product)}
-                        className="w-9 h-9 rounded-full bg-white/90 hover:bg-white text-slate-700 hover:text-rose-600 flex items-center justify-center shadow-md transition"
+                        className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/90 hover:bg-white text-slate-700 hover:text-rose-600 flex items-center justify-center shadow-md transition"
                         title="Xem nhanh"
                       >
-                        <BiShow className="text-lg" />
+                        <BiShow className="text-base sm:text-lg" />
                       </button>
                     </div>
                   </div>
 
                   {/* Card Details */}
-                  <div className="p-4 flex flex-col flex-1">
-                    <div className="text-[11px] uppercase font-bold text-rose-600 mb-1">
+                  <div className="p-3 sm:p-4 flex flex-col flex-1">
+                    <div className="text-[10px] sm:text-[11px] uppercase font-bold text-rose-600 mb-1 truncate">
                       {product.categoryName}
                     </div>
 
-                    <h3 className="font-bold text-slate-900 text-sm mb-2 line-clamp-2 leading-snug hover:text-rose-600 transition">
+                    <h3 className="font-bold text-slate-900 text-xs sm:text-sm mb-1.5 line-clamp-2 leading-snug hover:text-rose-600 transition min-h-[32px] sm:min-h-[36px]">
                       <Link href={`/products/${product.id}`}>{product.name}</Link>
                     </h3>
 
-                    <div className="mt-auto pt-2">
-                      <div className="flex items-baseline gap-2 mb-2">
-                        <span className="text-base md:text-lg font-extrabold text-rose-600">
+                    <div className="mt-auto pt-1 sm:pt-2">
+                      <div className="flex items-baseline gap-1.5 sm:gap-2 mb-2 flex-wrap">
+                        <span className="text-sm sm:text-base md:text-lg font-extrabold text-rose-600">
                           {product.price.toLocaleString("vi-VN")}đ
                         </span>
-                        <span className="text-xs text-slate-400 line-through">
+                        <span className="text-[11px] sm:text-xs text-slate-400 line-through">
                           {product.originalPrice.toLocaleString("vi-VN")}đ
                         </span>
                       </div>
 
                       {/* Stock Progress Bar */}
-                      <div className="space-y-1 mb-3">
-                        <div className="flex justify-between text-[11px] font-semibold text-slate-500">
+                      <div className="space-y-1 mb-2.5 sm:mb-3">
+                        <div className="flex justify-between text-[10px] sm:text-[11px] font-semibold text-slate-500">
                           <span>Đã bán {product.soldPercentage || 75}%</span>
-                          <span className="text-rose-600">Còn {product.stock}</span>
+                          <span className="text-rose-600 font-bold">Còn {product.stock}</span>
                         </div>
-                        <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                        <div className="w-full h-1.5 sm:h-2 bg-slate-100 rounded-full overflow-hidden">
                           <div
                             className="h-full bg-gradient-to-r from-rose-500 to-amber-500 rounded-full"
                             style={{ width: `${product.soldPercentage || 75}%` }}
@@ -377,7 +413,7 @@ export default function Home() {
                       {/* Add to Cart Button */}
                       <button
                         onClick={() => addToCart(product, 1, product.sizes[0], product.colors[0])}
-                        className="w-full py-2 bg-slate-900 hover:bg-rose-600 text-white text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 shadow min-h-[36px]"
+                        className="w-full py-2 px-2 bg-slate-900 hover:bg-rose-600 text-white text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 shadow min-h-[38px] active:scale-95"
                       >
                         <BiShoppingBag className="text-base flex-shrink-0" />
                         <span className="truncate">Thêm vào giỏ</span>
@@ -393,34 +429,34 @@ export default function Home() {
 
       {/* Lookbook / Trending Collections */}
       <section className="container mx-auto px-4 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto mb-10">
-          <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">
+        <div className="text-center max-w-2xl mx-auto mb-6 sm:mb-10">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 tracking-tight">
             Danh Mục Gia Dụng Thịnh Hành 2026
           </h2>
-          <p className="text-slate-500 text-sm mt-2">
-            Được tuyển chọn từ các dòng thiết bị và đồ dùng gia đình thông minh bán chạy nhất tại hệ thống
+          <p className="text-slate-500 text-xs sm:text-sm mt-1.5">
+            Tuyển chọn từ các dòng thiết bị và đồ dùng gia đình thông minh bán chạy nhất
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           {(pinnedCategories.length > 0 ? pinnedCategories : CATEGORIES).map((category) => (
             <Link
               key={category.id}
               href={`/products?cat=${category.id}`}
-              className="group relative rounded-3xl overflow-hidden aspect-[3/4] shadow-md border border-slate-100"
+              className="group relative rounded-2xl sm:rounded-3xl overflow-hidden aspect-[3/4] shadow-md border border-slate-100"
             >
               <img
                 src={category.imageUrl}
                 alt={category.name}
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent flex flex-col justify-end p-6 text-white">
-                <span className="bg-rose-600 text-white text-[10px] font-black uppercase px-2.5 py-1 rounded-md self-start mb-2">
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/30 to-transparent flex flex-col justify-end p-3.5 sm:p-6 text-white">
+                <span className="bg-rose-600 text-white text-[9px] sm:text-[10px] font-black uppercase px-2 py-0.5 rounded-md self-start mb-1.5 sm:mb-2">
                   {category.count} Sản phẩm
                 </span>
-                <h3 className="text-xl font-bold mb-1">{category.name}</h3>
-                <span className="text-xs font-semibold text-rose-300 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                  Khám phá ngay <BiRightArrowAlt className="text-base" />
+                <h3 className="text-sm sm:text-xl font-bold mb-0.5 line-clamp-1">{category.name}</h3>
+                <span className="text-[11px] sm:text-xs font-semibold text-rose-300 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                  Khám phá <BiRightArrowAlt className="text-sm sm:text-base" />
                 </span>
               </div>
             </Link>
@@ -464,7 +500,7 @@ export default function Home() {
         </div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
           {displayTabProducts.map((product) => (
             <div
               key={product.id}
@@ -479,10 +515,10 @@ export default function Home() {
                   />
                 </Link>
 
-                <div className="absolute top-2.5 right-2.5 flex flex-col gap-2">
+                <div className="absolute top-2 right-2 sm:top-2.5 sm:right-2.5 flex flex-col gap-1.5 sm:gap-2">
                   <button
                     onClick={() => toggleWishlist(product.id)}
-                    className={`w-9 h-9 rounded-full flex items-center justify-center shadow transition ${
+                    className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center shadow transition ${
                       isWishlisted(product.id)
                         ? "bg-rose-500 text-white"
                         : "bg-white/90 hover:bg-white text-slate-700 hover:text-rose-600"
@@ -493,39 +529,39 @@ export default function Home() {
                   </button>
                   <button
                     onClick={() => openQuickView(product)}
-                    className="w-9 h-9 rounded-full bg-white/90 hover:bg-white text-slate-700 hover:text-rose-600 flex items-center justify-center shadow transition"
+                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/90 hover:bg-white text-slate-700 hover:text-rose-600 flex items-center justify-center shadow transition"
                     title="Xem nhanh"
                   >
-                    <BiShow className="text-lg" />
+                    <BiShow className="text-base sm:text-lg" />
                   </button>
                 </div>
               </div>
 
-              <div className="p-4 flex flex-col flex-1">
-                <div className="text-[11px] font-bold text-slate-400 uppercase mb-1">
+              <div className="p-3 sm:p-4 flex flex-col flex-1">
+                <div className="text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase mb-1 truncate">
                   {product.categoryName}
                 </div>
 
-                <h3 className="font-bold text-slate-900 text-sm mb-2 line-clamp-2 hover:text-rose-600 transition leading-snug">
+                <h3 className="font-bold text-slate-900 text-xs sm:text-sm mb-1.5 line-clamp-2 hover:text-rose-600 transition leading-snug min-h-[32px] sm:min-h-[36px]">
                   <Link href={`/products/${product.id}`}>{product.name}</Link>
                 </h3>
 
-                <div className="flex items-center gap-1 text-amber-400 text-xs mb-3">
+                <div className="flex items-center gap-1 text-amber-400 text-xs mb-2.5">
                   <BiStar />
                   <span className="font-bold text-slate-700">{product.rating}</span>
                   <span className="text-slate-400">({product.reviewCount})</span>
                 </div>
 
-                <div className="mt-auto pt-2 border-t border-slate-50 flex items-center justify-between gap-2">
-                  <span className="text-sm font-extrabold text-rose-600 truncate">
+                <div className="mt-auto pt-2 border-t border-slate-50 flex items-center justify-between gap-1.5">
+                  <span className="text-xs sm:text-sm font-extrabold text-rose-600 truncate">
                     {product.price.toLocaleString("vi-VN")}đ
                   </span>
                   <button
                     onClick={() => addToCart(product, 1, product.sizes[0], product.colors[0])}
-                    className="p-2 rounded-xl bg-slate-100 hover:bg-rose-600 hover:text-white text-slate-700 transition flex-shrink-0"
+                    className="p-2 sm:p-2.5 rounded-xl bg-slate-100 hover:bg-rose-600 hover:text-white text-slate-700 transition flex-shrink-0 active:scale-95"
                     title="Thêm vào giỏ"
                   >
-                    <BiShoppingBag className="text-lg" />
+                    <BiShoppingBag className="text-base sm:text-lg" />
                   </button>
                 </div>
               </div>
@@ -533,10 +569,10 @@ export default function Home() {
           ))}
         </div>
 
-        <div className="text-center mt-10">
+        <div className="text-center mt-8 sm:mt-10">
           <Link
             href="/products"
-            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl border-2 border-slate-900 text-slate-900 font-bold hover:bg-slate-900 hover:text-white transition"
+            className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl border-2 border-slate-900 text-slate-900 font-bold hover:bg-slate-900 hover:text-white transition text-xs sm:text-sm"
           >
             Xem toàn bộ {PRODUCTS.length} sản phẩm <BiRightArrowAlt className="text-xl" />
           </Link>
@@ -545,25 +581,25 @@ export default function Home() {
 
       {/* Coupon Voucher Promotion Banner */}
       <section className="container mx-auto px-4 lg:px-8">
-        <div className="rounded-3xl p-8 md:p-12 text-white relative overflow-hidden bg-gradient-to-r from-slate-950 via-indigo-950 to-slate-950 border border-slate-800 shadow-2xl">
+        <div className="rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-12 text-white relative overflow-hidden bg-gradient-to-r from-slate-950 via-indigo-950 to-slate-950 border border-slate-800 shadow-2xl">
           <div className="relative z-10 max-w-xl">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 text-xs font-bold mb-3">
               <BiGift className="text-base" /> VOUCHER ĐỘC QUYỀN
             </span>
-            <h2 className="text-3xl md:text-4xl font-black mb-3">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black mb-2 sm:mb-3">
               Giảm Ngay 10% Cho Đơn Hàng Đầu Tiên
             </h2>
-            <p className="text-slate-300 text-sm mb-6 leading-relaxed">
+            <p className="text-slate-300 text-xs sm:text-sm mb-5 sm:mb-6 leading-relaxed">
               Áp dụng cho mọi thiết bị nhà bếp, đồ gia dụng thông minh và tiện ích gia đình khi thanh toán. Không giới hạn giá trị đơn hàng!
             </p>
 
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="bg-slate-900 border-2 border-dashed border-amber-400/60 rounded-xl px-5 py-3 font-mono font-bold text-amber-300 text-lg tracking-wider">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
+              <div className="bg-slate-900 border-2 border-dashed border-amber-400/60 rounded-xl px-4 py-2.5 sm:px-5 sm:py-3 font-mono font-bold text-amber-300 text-base sm:text-lg tracking-wider text-center">
                 GIADUNG10
               </div>
               <button
                 onClick={() => copyVoucher("GIADUNG10")}
-                className="bg-amber-400 hover:bg-amber-500 text-slate-950 font-extrabold px-6 py-3.5 rounded-xl transition shadow-lg flex items-center gap-1.5"
+                className="bg-amber-400 hover:bg-amber-500 text-slate-950 font-extrabold px-6 py-2.5 sm:py-3.5 rounded-xl transition shadow-lg flex items-center justify-center gap-1.5 text-xs sm:text-sm active:scale-95"
               >
                 {copiedVoucher ? <BiCheck className="text-xl" /> : null}
                 {copiedVoucher ? "Đã chép mã" : "Sao chép mã"}
@@ -679,9 +715,9 @@ export default function Home() {
 
       {/* Review Modal on Home Page */}
       {isReviewModalOpen && user && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsReviewModalOpen(false)} />
-          <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 sm:p-8 border border-slate-100 animate-in fade-in zoom-in-95 duration-150">
+          <div className="relative bg-white rounded-2xl sm:rounded-3xl shadow-2xl w-full max-w-md p-5 sm:p-8 border border-slate-100 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-150">
             <button
               onClick={() => setIsReviewModalOpen(false)}
               className="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition"
