@@ -1,10 +1,14 @@
 import mongoose from 'mongoose';
+import dns from 'dns';
 
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/clothing_shop_modern";
-
-if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
+// Fix for Node.js DNS resolution issues on Windows / local ISP with MongoDB Atlas SRV
+try {
+  dns.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
+} catch {
+  // In some environments, setServers might be restricted; ignore safely
 }
+
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb+srv://nguyenvanvinh290805_db_user:FhZeJiqgLhsGS8qZ@vinh.a5g35p9.mongodb.net/clothing_shop_modern?retryWrites=true&w=majority&appName=Vinh";
 
 interface MongooseCache {
   conn: typeof mongoose | null;
@@ -35,7 +39,7 @@ async function connectToDatabase() {
       return m;
     });
   }
-  
+
   try {
     cached.conn = await cached.promise;
   } catch (e) {

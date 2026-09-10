@@ -2,50 +2,42 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IOrder extends Document {
   orderId: string;
-  userId?: mongoose.Types.ObjectId;
+  createdAt: string;
   customerInfo: {
     fullName: string;
     phone: string;
     email: string;
     address: string;
-    notes?: string;
+    note?: string;
   };
   items: Array<{
-    productId: mongoose.Types.ObjectId;
-    name: string;
-    price: number;
+    id: number;
+    product: Record<string, unknown>;
     quantity: number;
     size: string;
     color: string;
   }>;
   totalAmount: number;
-  paymentMethod: 'cod' | 'card';
-  status: 'Chờ xác nhận' | 'Đang giao' | 'Thành công' | 'Đã hủy';
-  createdAt: Date;
+  status: string;
+  paymentMethod: string;
+  isArchived: boolean;
 }
 
 const OrderSchema: Schema = new Schema({
   orderId: { type: String, required: true, unique: true },
-  userId: { type: Schema.Types.ObjectId, ref: 'User' },
+  createdAt: { type: String, required: true },
   customerInfo: {
     fullName: { type: String, required: true },
     phone: { type: String, required: true },
-    email: { type: String, required: true },
+    email: { type: String, default: '' },
     address: { type: String, required: true },
-    notes: { type: String }
+    note: { type: String, default: '' },
   },
-  items: [{
-    productId: { type: Schema.Types.ObjectId, ref: 'Product' },
-    name: { type: String, required: true },
-    price: { type: Number, required: true },
-    quantity: { type: Number, required: true },
-    size: { type: String },
-    color: { type: String }
-  }],
+  items: { type: Array, default: [] },
   totalAmount: { type: Number, required: true },
-  paymentMethod: { type: String, enum: ['cod', 'card'], default: 'cod' },
-  status: { type: String, enum: ['Chờ xác nhận', 'Đang giao', 'Thành công', 'Đã hủy'], default: 'Chờ xác nhận' }
+  status: { type: String, default: 'Chờ xác nhận' },
+  paymentMethod: { type: String, default: 'cod' },
+  isArchived: { type: Boolean, default: false },
 }, { timestamps: true });
 
 export const Order = mongoose.models.Order || mongoose.model<IOrder>('Order', OrderSchema);
-

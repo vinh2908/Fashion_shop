@@ -203,7 +203,70 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
     }
   });
 
-  // Persist to LocalStorage
+  // --- MONGODB CLOUD REALTIME SYNC ---
+  const fetchCloudData = async () => {
+    try {
+      // 1. Đồng bộ Danh mục từ Cloud
+      const catRes = await fetch("/api/categories");
+      if (catRes.ok) {
+        const catJson = await catRes.json();
+        if (catJson.success && Array.isArray(catJson.data) && catJson.data.length > 0) {
+          setCategories(catJson.data);
+          try {
+            localStorage.setItem("fashion_categories", JSON.stringify(catJson.data));
+          } catch {}
+        }
+      }
+
+      // 2. Đồng bộ Sản phẩm từ Cloud
+      const prodRes = await fetch("/api/products");
+      if (prodRes.ok) {
+        const prodJson = await prodRes.json();
+        if (prodJson.success && Array.isArray(prodJson.data) && prodJson.data.length > 0) {
+          setProducts(prodJson.data);
+          try {
+            localStorage.setItem("fashion_products", JSON.stringify(prodJson.data));
+          } catch {}
+        }
+      }
+
+      // 3. Đồng bộ Đơn hàng từ Cloud
+      const orderRes = await fetch("/api/orders");
+      if (orderRes.ok) {
+        const orderJson = await orderRes.json();
+        if (orderJson.success && Array.isArray(orderJson.data)) {
+          setOrders(orderJson.data);
+          try {
+            localStorage.setItem("fashion_orders", JSON.stringify(orderJson.data));
+          } catch {}
+        }
+      }
+    } catch {
+      // Offline fallback
+    }
+  };
+
+  useEffect(() => {
+    // Tải dữ liệu đám mây không đồng bộ
+    const timer = setTimeout(() => {
+      fetchCloudData();
+    }, 100);
+
+    // Tự động kiểm tra và đồng bộ thời gian thực mỗi 4 giây
+    const interval = setInterval(fetchCloudData, 4000);
+
+    // Khi người dùng chuyển tab và quay lại web -> lập tức đồng bộ ngay
+    const handleFocus = () => fetchCloudData();
+    window.addEventListener("focus", handleFocus);
+
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+      window.removeEventListener("focus", handleFocus);
+    };
+  }, []);
+
+  // Persist to LocalStorage cache
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem("fashion_categories", JSON.stringify(categories));
@@ -378,7 +441,7 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
   const pinnedCategories = categories.filter((c) => !c.isArchived && c.isPinned);
   const archivedCategories = categories.filter((c) => c.isArchived);
 
-  const addCategory = (catData: { name: string; imageUrl: string; description?: string; isPinned?: boolean }) => {
+  const addCategory = async (catData: { name: string; imageUrl: string; description?: string; isPinned?: boolean }) => {
     const newId = Math.max(0, ...categories.map((c) => c.id)) + 1;
     const newCategory: CategoryItem = {
       id: newId,
@@ -394,64 +457,103 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
 
     setCategories((prev) => [...prev, newCategory]);
     showToast(`Đã thêm danh mục mới "${catData.name}"!`, "success");
+
+    try {
+      await fetch("/api/categories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newCategory),
+      });
+      fetchCloudData();
+    } catch {}
   };
 
-  const updateCategory = (id: number, catData: Partial<CategoryItem>) => {
+  const updateCategory = async (id: number, catData: Partial<CategoryItem>) => {
     setCategories((prev) =>
       prev.map((c) => (c.id === id ? { ...c, ...catData } : c))
     );
     showToast("Đã cập nhật thông tin danh mục!", "success");
+
+    try {
+      await fetch("/api/categories", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, ...catData }),
+      });
+      fetchCloudData();
+    } catch {}
   };
 
-  const deleteCategory = (id: number) => {
+  const deleteCategory = async (id: number) => {
     setCategories((prev) => prev.filter((c) => c.id !== id));
     showToast("Đã xóa vĩnh viễn danh mục!", "info");
+
+    try {
+      await fetch(`/api/categories?id=${id}`, { method: "DELETE" });
+      fetchCloudData();
+    } catch {}
   };
 
-  const togglePinCategory = (id: number) => {
+  const togglePinCategory = async (id: number) => {
+    const cat = categories.find((c) => c.id === id);
+    if (!cat) return;
+    const newPinned = !cat.isPinned;
     setCategories((prev) =>
-      prev.map((c) => {
-        if (c.id === id) {
-          const newPinned = !c.isPinned;
-          showToast(
-            newPinned
-              ? `Đã ghim danh mục "${c.name}" lên giao diện web!`
-              : `Đã hạ danh mục "${c.name}" xuống (ẩn trên web)!`,
-            newPinned ? "success" : "info"
-          );
-          return { ...c, isPinned: newPinned, isVisible: newPinned };
-        }
-        return c;
-      })
+      prev.map((c) => (c.id === id ? { ...c, isPinned: newPinned, isVisible: newPinned } : c))
     );
+    showToast(
+      newPinned
+        ? `Đã ghim danh mục "${cat.name}" lên giao diện web!`
+        : `Đã hạ danh mục "${cat.name}" xuống (ẩn trên web)!`,
+      newPinned ? "success" : "info"
+    );
+
+    try {
+      await fetch("/api/categories", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, isPinned: newPinned, isVisible: newPinned }),
+      });
+      fetchCloudData();
+    } catch {}
   };
 
-  const archiveCategory = (id: number) => {
+  const archiveCategory = async (id: number) => {
+    const cat = categories.find((c) => c.id === id);
     setCategories((prev) =>
-      prev.map((c) => {
-        if (c.id === id) {
-          showToast(`Đã chuyển danh mục "${c.name}" vào kho lưu trữ!`, "info");
-          return { ...c, isArchived: true, isPinned: false, isVisible: false };
-        }
-        return c;
-      })
+      prev.map((c) => (c.id === id ? { ...c, isArchived: true, isPinned: false, isVisible: false } : c))
     );
+    showToast(`Đã chuyển danh mục "${cat?.name}" vào kho lưu trữ!`, "info");
+
+    try {
+      await fetch("/api/categories", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, isArchived: true, isPinned: false, isVisible: false }),
+      });
+      fetchCloudData();
+    } catch {}
   };
 
-  const restoreCategory = (id: number) => {
+  const restoreCategory = async (id: number) => {
+    const cat = categories.find((c) => c.id === id);
     setCategories((prev) =>
-      prev.map((c) => {
-        if (c.id === id) {
-          showToast(`Đã khôi phục danh mục "${c.name}" từ kho lưu trữ!`, "success");
-          return { ...c, isArchived: false, isPinned: true, isVisible: true };
-        }
-        return c;
-      })
+      prev.map((c) => (c.id === id ? { ...c, isArchived: false, isPinned: true, isVisible: true } : c))
     );
+    showToast(`Đã khôi phục danh mục "${cat?.name}" từ kho lưu trữ!`, "success");
+
+    try {
+      await fetch("/api/categories", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, isArchived: false, isPinned: true, isVisible: true }),
+      });
+      fetchCloudData();
+    } catch {}
   };
 
   // --- PRODUCTS MANAGEMENT ---
-  const addProduct = (prodData: Omit<ProductItem, "id">) => {
+  const addProduct = async (prodData: Omit<ProductItem, "id">) => {
     const newId = Math.max(0, ...products.map((p) => p.id)) + 1;
     const newProd: ProductItem = {
       ...prodData,
@@ -459,18 +561,41 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
     };
     setProducts((prev) => [newProd, ...prev]);
     showToast(`Đã thêm sản phẩm "${prodData.name}" vào kho!`, "success");
+
+    try {
+      await fetch("/api/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newProd),
+      });
+      fetchCloudData();
+    } catch {}
   };
 
-  const updateProduct = (id: number, prodData: Partial<ProductItem>) => {
+  const updateProduct = async (id: number, prodData: Partial<ProductItem>) => {
     setProducts((prev) =>
       prev.map((p) => (p.id === id ? { ...p, ...prodData } : p))
     );
     showToast(`Đã cập nhật sản phẩm thành công!`, "success");
+
+    try {
+      await fetch("/api/products", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, ...prodData }),
+      });
+      fetchCloudData();
+    } catch {}
   };
 
-  const deleteProduct = (id: number) => {
+  const deleteProduct = async (id: number) => {
     setProducts((prev) => prev.filter((p) => p.id !== id));
     showToast("Đã xóa sản phẩm khỏi kho!", "info");
+
+    try {
+      await fetch(`/api/products?id=${id}`, { method: "DELETE" });
+      fetchCloudData();
+    } catch {}
   };
 
   // --- ORDERS & ARCHIVE MANAGEMENT ---
@@ -495,28 +620,63 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
     setOrders((prev) => [newOrder, ...prev]);
     clearCart();
     showToast(`Đặt hàng thành công! Mã đơn hàng #${newOrderId}`, "success");
+
+    // Sync order to Cloud
+    fetch("/api/orders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newOrder),
+    }).catch(() => {});
+
     return newOrder;
   };
 
-  const updateOrderStatus = (orderId: string, status: OrderItem["status"]) => {
+  const updateOrderStatus = async (orderId: string, status: OrderItem["status"]) => {
     setOrders((prev) =>
       prev.map((o) => (o.orderId === orderId ? { ...o, status } : o))
     );
     showToast(`Cập nhật đơn #${orderId} thành "${status}"!`, "success");
+
+    try {
+      await fetch("/api/orders", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId, status }),
+      });
+      fetchCloudData();
+    } catch {}
   };
 
-  const archiveOrder = (orderId: string) => {
+  const archiveOrder = async (orderId: string) => {
     setOrders((prev) =>
       prev.map((o) => (o.orderId === orderId ? { ...o, isArchived: true } : o))
     );
     showToast(`Đã chuyển đơn hàng #${orderId} vào kho lưu trữ!`, "info");
+
+    try {
+      await fetch("/api/orders", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId, isArchived: true }),
+      });
+      fetchCloudData();
+    } catch {}
   };
 
-  const restoreOrder = (orderId: string) => {
+  const restoreOrder = async (orderId: string) => {
     setOrders((prev) =>
       prev.map((o) => (o.orderId === orderId ? { ...o, isArchived: false } : o))
     );
     showToast(`Đã lấy đơn hàng #${orderId} ra khỏi kho lưu trữ!`, "success");
+
+    try {
+      await fetch("/api/orders", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId, isArchived: false }),
+      });
+      fetchCloudData();
+    } catch {}
   };
 
   return (
