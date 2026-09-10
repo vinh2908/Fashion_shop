@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import { useShop } from "@/context/ShopContext";
 import {
   BiSolidShoppingBag,
@@ -276,6 +277,7 @@ export default function Navbar() {
 
               {/* Mobile Hamburger Toggle Button */}
               <button
+                type="button"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="xl:hidden p-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition"
                 aria-label="Mở menu"
@@ -304,18 +306,29 @@ export default function Navbar() {
             </form>
           </div>
         )}
+      </nav>
 
-        {/* Mobile Slide-Over Drawer with Backdrop Overlay */}
+      {/* Mobile Slide-Over Drawer with Backdrop Overlay (Moved outside nav for proper viewport fixed positioning) */}
+      <AnimatePresence>
         {isMobileMenuOpen && (
-          <div className="fixed inset-0 z-50 xl:hidden">
+          <div className="fixed inset-0 z-[9999] xl:hidden">
             {/* Backdrop */}
-            <div
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/70 backdrop-blur-sm"
               onClick={() => setIsMobileMenuOpen(false)}
             />
 
             {/* Drawer panel */}
-            <div className="fixed inset-y-0 right-0 w-[85%] max-w-[340px] bg-slate-900 border-l border-slate-800 p-5 flex flex-col justify-between overflow-y-auto shadow-2xl z-10 animate-in slide-in-from-right duration-200">
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 30, stiffness: 350 }}
+              className="fixed inset-y-0 right-0 w-[85%] max-w-[340px] bg-slate-900 border-l border-slate-800 p-5 flex flex-col justify-between overflow-y-auto shadow-2xl z-10"
+            >
               <div>
                 {/* Drawer Header */}
                 <div className="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
@@ -330,6 +343,7 @@ export default function Navbar() {
                     <span>Home<span className="text-rose-500">Living</span></span>
                   </Link>
                   <button
+                    type="button"
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition"
                     aria-label="Đóng menu"
@@ -439,24 +453,27 @@ export default function Navbar() {
                         </div>
                       </div>
                       <button
+                        type="button"
                         onClick={() => {
                           logout();
                           setIsMobileMenuOpen(false);
                         }}
-                        className="text-[11px] font-bold text-rose-400 hover:underline flex-shrink-0 ml-2"
+                        className="text-slate-400 hover:text-rose-400 p-1 transition"
+                        title="Đăng xuất"
                       >
-                        Đăng xuất
+                        <BiLogOut className="text-lg" />
                       </button>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2 pt-1">
+                    <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-800/80">
                       <button
+                        type="button"
                         onClick={() => {
                           setProfileForm({ fullName: user.fullName, phone: user.phone || "" });
                           setIsMobileMenuOpen(false);
                           setIsProfileModalOpen(true);
                         }}
-                        className="py-2 px-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1.5 transition"
+                        className="py-2 px-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1.5 transition"
                       >
                         <BiEdit className="text-rose-400 text-sm" /> Sửa hồ sơ
                       </button>
@@ -489,10 +506,10 @@ export default function Navbar() {
                   <BiPhoneCall className="text-base" /> Hotline hỗ trợ: 1900 1234
                 </a>
               </div>
-            </div>
+            </motion.div>
           </div>
         )}
-      </nav>
+      </AnimatePresence>
 
       {/* Profile Edit Modal */}
       {isProfileModalOpen && user && (
