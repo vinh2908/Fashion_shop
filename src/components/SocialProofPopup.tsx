@@ -8,30 +8,30 @@ const PURCHASES = [
   {
     name: "Nguyễn Minh Trang",
     city: "Hà Nội",
-    item: "Áo Sơ Mi Lụa Hàn Quốc",
+    item: "Nồi Chiên Không Dầu Smart Touch 6.5L",
     time: "2 phút trước",
-    img: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=120&auto=format&fit=crop&q=80",
+    img: "https://images.unsplash.com/photo-1585515320310-259814833e62?w=120&auto=format&fit=crop&q=80",
   },
   {
     name: "Trần Hoàng Nam",
     city: "TP. Hồ Chí Minh",
-    item: "Áo Thun Nam Cotton 100% Premium",
+    item: "Robot Hút Bụi Lau Nhà Laser Lidar AI",
     time: "4 phút trước",
-    img: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=120&auto=format&fit=crop&q=80",
+    img: "https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?w=120&auto=format&fit=crop&q=80",
   },
   {
     name: "Lê Thu Hà",
     city: "Đà Nẵng",
-    item: "Váy Hoa Nhí Dáng Dài Vintage",
+    item: "Máy Xay Sinh Tố & Nấu Sữa Hạt 1.75L",
     time: "1 phút trước",
-    img: "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=120&auto=format&fit=crop&q=80",
+    img: "https://images.unsplash.com/photo-1544233726-9f1d2b27be8b?w=120&auto=format&fit=crop&q=80",
   },
   {
     name: "Phạm Hải Đăng",
     city: "Hải Phòng",
-    item: "Quần Jean Nam Slim Fit",
+    item: "Bộ Nồi Chảo Inox 304 5 Đáy 5 Món",
     time: "6 phút trước",
-    img: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=120&auto=format&fit=crop&q=80",
+    img: "https://images.unsplash.com/photo-1590794056226-79ef3a8147e1?w=120&auto=format&fit=crop&q=80",
   },
 ];
 

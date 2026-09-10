@@ -108,19 +108,19 @@ export default function Home() {
             >
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-rose-500/20 border border-rose-500/30 text-rose-400 text-xs md:text-sm font-bold">
                 <BiStar className="text-yellow-400" />
-                <span>BỘ SƯU TẬP THỜI TRANG CAO CẤP 2026</span>
+                <span>BỘ SƯU TẬP THIẾT BỊ GIA DỤNG CAO CẤP 2026</span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-[1.15]">
-                Thời Trang & <br />
+                Không Gian Sống & <br />
                 <span className="bg-gradient-to-r from-rose-400 via-pink-400 to-amber-300 bg-clip-text text-transparent">
-                  Phong Cách Sống
+                  Tiện Nghi Hiện Đại
                 </span> <br />
-                Đỉnh Cao Của Bạn
+                Cho Mọi Gia Đình
               </h1>
 
               <p className="text-slate-300 text-base md:text-lg max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                Khám phá các thiết kế thời trang hiện đại, chất liệu tự nhiên chọn lọc cao cấp. Tôn vinh nét thanh lịch và tự tin trong từng khoảnh khắc.
+                Khám phá hệ sinh thái thiết bị nhà bếp và đồ gia dụng thông minh đỉnh cao. Tối ưu thời gian nội trợ, nâng tầm chất lượng cuộc sống cho tổ ấm của bạn.
               </p>
 
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
@@ -141,12 +141,12 @@ export default function Home() {
               {/* Stats Bar */}
               <div className="grid grid-cols-3 gap-4 pt-6 border-t border-white/10 max-w-md mx-auto lg:mx-0">
                 <div>
-                  <div className="text-2xl md:text-3xl font-black text-white">10K+</div>
-                  <div className="text-xs text-slate-400">Khách hàng tin dùng</div>
+                  <div className="text-2xl md:text-3xl font-black text-white">50K+</div>
+                  <div className="text-xs text-slate-400">Gia đình tin dùng</div>
                 </div>
                 <div>
-                  <div className="text-2xl md:text-3xl font-black text-white">500+</div>
-                  <div className="text-xs text-slate-400">Mẫu thiết kế độc quyền</div>
+                  <div className="text-2xl md:text-3xl font-black text-white">100+</div>
+                  <div className="text-xs text-slate-400">Thiết bị thông minh</div>
                 </div>
                 <div>
                   <div className="text-2xl md:text-3xl font-black text-amber-400 flex items-center justify-center lg:justify-start gap-1">
@@ -167,8 +167,8 @@ export default function Home() {
               <div className="relative mx-auto max-w-md">
                 <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border border-white/10">
                   <img
-                    src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&auto=format&fit=crop&q=80"
-                    alt="Fashion Collection"
+                    src="https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=800&auto=format&fit=crop&q=80"
+                    alt="Home Appliances Collection"
                     className="w-full h-full object-cover"
                   />
                 </div>
@@ -180,7 +180,7 @@ export default function Home() {
                   </div>
                   <div>
                     <div className="font-bold text-sm">100% Chính Hãng</div>
-                    <div className="text-xs text-slate-400">Cam kết đổi trả 30 ngày</div>
+                    <div className="text-xs text-slate-400">Bảo hành 12 - 24 tháng</div>
                   </div>
                 </div>
 
@@ -226,7 +226,7 @@ export default function Home() {
               </div>
               <div>
                 <h4 className="font-bold text-slate-900 text-sm md:text-base">100% Chính hãng</h4>
-                <p className="text-xs text-slate-500">Chuẩn form may cao cấp</p>
+                <p className="text-xs text-slate-500">Bảo hành 12 - 24 tháng</p>
               </div>
             </div>
 
@@ -395,10 +395,10 @@ export default function Home() {
       <section className="container mx-auto px-4 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-10">
           <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">
-            Bộ Sưu Tập Xu Hướng 2026
+            Danh Mục Gia Dụng Thịnh Hành 2026
           </h2>
           <p className="text-slate-500 text-sm mt-2">
-            Được tuyển chọn từ các dòng thời trang phong cách và bán chạy nhất tại hệ thống
+            Được tuyển chọn từ các dòng thiết bị và đồ dùng gia đình thông minh bán chạy nhất tại hệ thống
           </p>
         </div>
 
@@ -416,7 +416,7 @@ export default function Home() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent flex flex-col justify-end p-6 text-white">
                 <span className="bg-rose-600 text-white text-[10px] font-black uppercase px-2.5 py-1 rounded-md self-start mb-2">
-                  {category.count} Mẫu mới
+                  {category.count} Sản phẩm
                 </span>
                 <h3 className="text-xl font-bold mb-1">{category.name}</h3>
                 <span className="text-xs font-semibold text-rose-300 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
@@ -554,15 +554,15 @@ export default function Home() {
               Giảm Ngay 10% Cho Đơn Hàng Đầu Tiên
             </h2>
             <p className="text-slate-300 text-sm mb-6 leading-relaxed">
-              Áp dụng cho mọi sản phẩm áo, quần, váy đầm và phụ kiện khi thanh toán. Không giới hạn giá trị đơn hàng!
+              Áp dụng cho mọi thiết bị nhà bếp, đồ gia dụng thông minh và tiện ích gia đình khi thanh toán. Không giới hạn giá trị đơn hàng!
             </p>
 
             <div className="flex flex-wrap items-center gap-3">
               <div className="bg-slate-900 border-2 border-dashed border-amber-400/60 rounded-xl px-5 py-3 font-mono font-bold text-amber-300 text-lg tracking-wider">
-                FASHION10
+                GIADUNG10
               </div>
               <button
-                onClick={() => copyVoucher("FASHION10")}
+                onClick={() => copyVoucher("GIADUNG10")}
                 className="bg-amber-400 hover:bg-amber-500 text-slate-950 font-extrabold px-6 py-3.5 rounded-xl transition shadow-lg flex items-center gap-1.5"
               >
                 {copiedVoucher ? <BiCheck className="text-xl" /> : null}
@@ -610,7 +610,7 @@ export default function Home() {
               userName: "Nguyễn Thu Trang",
               city: "Hà Nội",
               rating: 5,
-              content: "Chất vải linen áo sơ mi sờ cực thích, thoáng mát và chuẩn form dáng người Việt. Đóng gói hộp rất sang trọng, giao hàng chỉ trong 1 ngày!",
+              content: "Nồi chiên không dầu dùng cực kỳ ưng ý, nướng gà nguyên con chín vàng đều giòn rụm mà không bị khô. Lòng nồi chống dính tháo rời rửa rất nhanh, giao hàng chỉ trong 1 ngày!",
               initials: "NT",
               color: "bg-rose-100 text-rose-600",
             },
@@ -619,7 +619,7 @@ export default function Home() {
               userName: "Hoàng Văn Vũ",
               city: "TP. Hồ Chí Minh",
               rating: 5,
-              content: "Quần jean co giãn rất êm chân, màu wash đẹp y hình. Đổi size được nhân viên hỗ trợ mang tận nơi đổi miễn phí, rất hài lòng với dịch vụ.",
+              content: "Robot hút bụi Lidar quét bản đồ nhà rất chuẩn xác, hút sạch tóc và bụi mịn góc chân tường. Kết nối app điều khiển mượt mà, bảo hành chính hãng rất an tâm.",
               initials: "HV",
               color: "bg-blue-100 text-blue-600",
             },
@@ -628,7 +628,7 @@ export default function Home() {
               userName: "Lê Lan Anh",
               city: "Đà Nẵng",
               rating: 5,
-              content: "Váy hoa nhí đi tiệc xinh xỉu, đường may chỉn chu không có chỉ thừa. Mặc lên tôn dáng lắm mọi người nên thử nhé!",
+              content: "Bộ nồi chảo inox 304 bắt từ cực nhanh, thân đúc dày dặn cầm đầm tay sang trọng. Nắp kính cường lực nhìn đồ ăn đang sôi rất thích mắt, chuẩn điểm 10 chất lượng!",
               initials: "LA",
               color: "bg-emerald-100 text-emerald-600",
             },

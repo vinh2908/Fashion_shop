@@ -140,7 +140,7 @@ export default function QuickViewModal() {
             {/* Sizes */}
             <div className="mb-5">
               <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                Kích thước: <span className="text-rose-600 font-bold">{activeSize}</span>
+                Phiên bản / Dung tích: <span className="text-rose-600 font-bold">{activeSize}</span>
               </label>
               <div className="flex flex-wrap gap-1.5">
                 {quickViewProduct.sizes.map((size) => (
@@ -148,7 +148,7 @@ export default function QuickViewModal() {
                     key={size}
                     type="button"
                     onClick={() => setSelectedSize(size)}
-                    className={`w-10 h-10 text-xs font-bold rounded-xl border transition flex items-center justify-center ${
+                    className={`px-3 h-9 text-xs font-bold rounded-xl border transition flex items-center justify-center ${
                       activeSize === size
                         ? "border-rose-600 bg-rose-600 text-white shadow-md shadow-rose-600/30 ring-2 ring-rose-600/30"
                         : "border-slate-200 hover:border-slate-300 text-slate-700 bg-slate-50"

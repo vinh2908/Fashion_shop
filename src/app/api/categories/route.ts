@@ -8,15 +8,20 @@ function getErrorMessage(error: unknown): string {
   return String(error);
 }
 
-// GET: Lấy danh sách danh mục (Tự động khởi tạo dữ liệu mẫu nếu DB trống)
-export async function GET() {
+// GET: Lấy danh sách danh mục (Tự động khởi tạo dữ liệu mẫu nếu DB trống, hỗ trợ ?reset=true)
+export async function GET(req: Request) {
   try {
     await connectToDatabase();
+    const { searchParams } = new URL(req.url);
+    const shouldReset = searchParams.get('reset') === 'true';
 
     let items = await Category.find({}).sort({ id: 1 }).lean();
 
-    // Auto-seed ban đầu nếu database còn trống
-    if (!items || items.length === 0) {
+    // Auto-seed hoặc reset sang danh mục gia dụng
+    if (shouldReset || !items || items.length === 0) {
+      if (shouldReset) {
+        await Category.deleteMany({});
+      }
       await Category.insertMany(
         CATEGORIES.map((c) => ({
           id: c.id,
@@ -42,11 +47,27 @@ export async function GET() {
   }
 }
 
-// POST: Thêm danh mục mới
+// POST: Thêm danh mục mới hoặc reset
 export async function POST(req: Request) {
   try {
     await connectToDatabase();
     const body = await req.json();
+
+    if (body.action === 'reset') {
+      await Category.deleteMany({});
+      const inserted = await Category.insertMany(
+        CATEGORIES.map((c) => ({
+          id: c.id,
+          name: c.name,
+          imageUrl: c.imageUrl,
+          description: c.description || '',
+          isPinned: c.isPinned ?? true,
+          isVisible: c.isVisible ?? true,
+          isArchived: c.isArchived ?? false,
+        }))
+      );
+      return NextResponse.json({ success: true, data: inserted });
+    }
 
     let nextId = body.id;
     if (!nextId) {
@@ -72,7 +93,7 @@ export async function POST(req: Request) {
   }
 }
 
-// PUT: Cập nhật danh mục (Đổi tên, ảnh, ghim, lưu trữ, khôi phục)
+// PUT: Cập nhật danh mục
 export async function PUT(req: Request) {
   try {
     await connectToDatabase();

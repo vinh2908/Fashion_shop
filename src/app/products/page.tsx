@@ -62,12 +62,12 @@ function ProductsContent() {
     }
 
     // Price range filter
-    if (selectedPrice === "under200") {
-      result = result.filter((p) => p.price < 200000);
-    } else if (selectedPrice === "200to500") {
-      result = result.filter((p) => p.price >= 200000 && p.price <= 500000);
-    } else if (selectedPrice === "above500") {
-      result = result.filter((p) => p.price > 500000);
+    if (selectedPrice === "under500") {
+      result = result.filter((p) => p.price < 500000);
+    } else if (selectedPrice === "500to1500") {
+      result = result.filter((p) => p.price >= 500000 && p.price <= 1500000);
+    } else if (selectedPrice === "above1500") {
+      result = result.filter((p) => p.price > 1500000);
     }
 
     // Sorting
@@ -103,8 +103,8 @@ function ProductsContent() {
   };
 
   const copyVoucher = () => {
-    navigator.clipboard.writeText("FASHION10");
-    showToast("Đã sao chép mã voucher FASHION10!", "success");
+    navigator.clipboard.writeText("GIADUNG10");
+    showToast("Đã sao chép mã voucher GIADUNG10!", "success");
   };
 
   return (
@@ -193,9 +193,9 @@ function ProductsContent() {
               <div className="space-y-2 text-sm text-slate-700">
                 {[
                   { value: "all", label: "Tất cả mức giá" },
-                  { value: "under200", label: "Dưới 200.000đ" },
-                  { value: "200to500", label: "200.000đ - 500.000đ" },
-                  { value: "above500", label: "Trên 500.000đ" },
+                  { value: "under500", label: "Dưới 500.000đ" },
+                  { value: "500to1500", label: "500.000đ - 1.500.000đ" },
+                  { value: "above1500", label: "Trên 1.500.000đ" },
                 ].map((item) => (
                   <label key={item.value} className="flex items-center gap-2.5 cursor-pointer py-0.5">
                     <input
@@ -224,16 +224,18 @@ function ProductsContent() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Nhập tên sản phẩm..."
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:bg-white focus:outline-none focus:border-rose-500 transition"
+                  placeholder="Nồi chiên, bếp từ, robot..."
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 pl-3 pr-8 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-rose-500 transition"
                 />
-                {searchQuery && (
+                {searchQuery ? (
                   <button
                     onClick={() => setSearchQuery("")}
                     className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                   >
                     <BiX />
                   </button>
+                ) : (
+                  <BiSearch className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
                 )}
               </div>
             </div>
@@ -244,7 +246,7 @@ function ProductsContent() {
             <BiGift className="text-3xl text-amber-400 mx-auto mb-2" />
             <h5 className="font-black text-sm mb-1">Mã Giảm Giá 10%</h5>
             <p className="text-xs text-slate-300 mb-3">
-              Nhập <strong className="text-amber-300">FASHION10</strong> khi thanh toán để giảm ngay 10%!
+              Nhập <strong className="text-amber-300">GIADUNG10</strong> khi thanh toán để giảm ngay 10%!
             </p>
             <button
               onClick={copyVoucher}
@@ -632,9 +634,9 @@ function ProductsContent() {
                 <div className="space-y-2 text-sm text-slate-700">
                   {[
                     { value: "all", label: "Tất cả mức giá" },
-                    { value: "under200", label: "Dưới 200.000đ" },
-                    { value: "200to500", label: "200.000đ - 500.000đ" },
-                    { value: "above500", label: "Trên 500.000đ" },
+                    { value: "under500", label: "Dưới 500.000đ" },
+                    { value: "500to1500", label: "500.000đ - 1.500.000đ" },
+                    { value: "above1500", label: "Trên 1.500.000đ" },
                   ].map((item) => (
                     <label key={item.value} className="flex items-center gap-2 cursor-pointer">
                       <input

@@ -31,6 +31,7 @@ import {
   BiMapPin,
   BiCreditCard,
   BiBell,
+  BiRefresh,
 } from "react-icons/bi";
 
 interface CustomerItem {
@@ -60,6 +61,7 @@ export default function AdminDashboard() {
     addProduct,
     updateProduct,
     deleteProduct,
+    resetToHomeApplianceData,
 
     // Orders
     orders,
@@ -209,7 +211,7 @@ export default function AdminDashboard() {
   const handleSaveProduct = (e: React.FormEvent) => {
     e.preventDefault();
     const catObj = activeCategories.find((c) => c.id === Number(productForm.category));
-    const categoryName = catObj ? catObj.name : "Thời trang";
+    const categoryName = catObj ? catObj.name : "Gia dụng";
 
     if (editingProduct) {
       updateProduct(editingProduct.id, {
@@ -264,7 +266,7 @@ export default function AdminDashboard() {
     setEditingCategory(null);
     setCategoryForm({
       name: "",
-      imageUrl: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=80",
+      imageUrl: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=500&auto=format&fit=crop&q=80",
       description: "",
       isPinned: true,
     });
@@ -506,6 +508,15 @@ export default function AdminDashboard() {
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Nút đặt lại dữ liệu mẫu Đồ Gia Dụng */}
+            <button
+              onClick={resetToHomeApplianceData}
+              className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-xl text-xs font-bold transition shadow-sm"
+              title="Khôi phục 24 sản phẩm đồ gia dụng mặc định"
+            >
+              <BiRefresh className="text-base" /> Đặt lại dữ liệu Gia Dụng
+            </button>
+
             {/* Order Notifications in Admin */}
             <div className="relative">
               <button

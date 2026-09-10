@@ -8,14 +8,19 @@ function getErrorMessage(error: unknown): string {
   return String(error);
 }
 
-// GET: Lấy danh sách sản phẩm (Tự động khởi tạo dữ liệu mẫu nếu DB trống)
-export async function GET() {
+// GET: Lấy danh sách sản phẩm (Tự động khởi tạo dữ liệu mẫu nếu DB trống, hỗ trợ ?reset=true)
+export async function GET(req: Request) {
   try {
     await connectToDatabase();
+    const { searchParams } = new URL(req.url);
+    const shouldReset = searchParams.get('reset') === 'true';
 
     let items = await Product.find({}).sort({ id: 1 }).lean();
 
-    if (!items || items.length === 0) {
+    if (shouldReset || !items || items.length === 0) {
+      if (shouldReset) {
+        await Product.deleteMany({});
+      }
       await Product.insertMany(
         PRODUCTS.map((p) => ({
           id: p.id,
@@ -31,7 +36,7 @@ export async function GET() {
           gallery: p.gallery || [p.imageUrl],
           description: p.description || '',
           colors: p.colors || ['Trắng', 'Đen'],
-          sizes: p.sizes || ['S', 'M', 'L'],
+          sizes: p.sizes || ['Tiêu chuẩn'],
           isFlashSale: p.isFlashSale ?? false,
           soldPercentage: p.soldPercentage ?? 0,
           isArchived: false,
@@ -51,11 +56,37 @@ export async function GET() {
   }
 }
 
-// POST: Thêm sản phẩm mới
+// POST: Thêm sản phẩm mới hoặc reset
 export async function POST(req: Request) {
   try {
     await connectToDatabase();
     const body = await req.json();
+
+    if (body.action === 'reset') {
+      await Product.deleteMany({});
+      const inserted = await Product.insertMany(
+        PRODUCTS.map((p) => ({
+          id: p.id,
+          name: p.name,
+          category: p.category,
+          categoryName: p.categoryName,
+          price: p.price,
+          originalPrice: p.originalPrice || 0,
+          stock: p.stock ?? 20,
+          rating: p.rating ?? 5.0,
+          reviewCount: p.reviewCount ?? 0,
+          imageUrl: p.imageUrl,
+          gallery: p.gallery || [p.imageUrl],
+          description: p.description || '',
+          colors: p.colors || ['Trắng', 'Đen'],
+          sizes: p.sizes || ['Tiêu chuẩn'],
+          isFlashSale: p.isFlashSale ?? false,
+          soldPercentage: p.soldPercentage ?? 0,
+          isArchived: false,
+        }))
+      );
+      return NextResponse.json({ success: true, data: inserted });
+    }
 
     let nextId = body.id;
     if (!nextId) {
@@ -70,7 +101,7 @@ export async function POST(req: Request) {
       reviewCount: body.reviewCount ?? 0,
       gallery: body.gallery || [body.imageUrl],
       colors: body.colors || ['Trắng', 'Đen'],
-      sizes: body.sizes || ['S', 'M', 'L'],
+      sizes: body.sizes || ['Tiêu chuẩn'],
       isArchived: false,
     });
 

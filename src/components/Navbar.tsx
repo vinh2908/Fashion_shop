@@ -58,14 +58,14 @@ export default function Navbar() {
       <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 text-slate-300 text-xs py-2 border-b border-white/10 tracking-wide">
         <div className="container mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-1 text-center sm:text-left">
           <span>
-            🎉 <strong className="text-white">Ưu đãi đặc biệt:</strong> Miễn phí vận chuyển toàn quốc cho đơn hàng từ <strong className="text-amber-400">500.000đ</strong> | Mã giảm: <strong className="text-rose-400">FASHION10</strong> (-10%)
+            🎉 <strong className="text-white">Ưu đãi đặc biệt:</strong> Miễn phí vận chuyển toàn quốc cho đơn hàng từ <strong className="text-amber-400">500.000đ</strong> | Mã giảm: <strong className="text-rose-400">GIADUNG10</strong> (-10%)
           </span>
           <div className="flex items-center gap-4 text-slate-400">
             <span className="flex items-center gap-1">
               <BiPhoneCall className="text-rose-500 text-sm" /> Hotline: <strong className="text-white">1900 1234</strong>
             </span>
             <span className="hidden md:inline">|</span>
-            <span className="hidden md:inline">Đổi trả 30 ngày tận nơi</span>
+            <span className="hidden md:inline">Bảo hành 12 - 24 tháng tận nhà</span>
           </div>
         </div>
       </div>
@@ -78,10 +78,10 @@ export default function Navbar() {
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2.5 text-2xl font-extrabold tracking-tight text-white hover:text-rose-400 transition flex-shrink-0">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-rose-700 flex items-center justify-center shadow-lg shadow-rose-600/40">
-                <BiSolidShoppingBag className="text-2xl text-white" />
+                <BiHome className="text-2xl text-white" />
               </div>
               <span className="bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">
-                Fashion<span className="text-rose-500 font-black">Store</span>
+                Home<span className="text-rose-500 font-black">Living</span>
               </span>
             </Link>
 
@@ -125,7 +125,7 @@ export default function Navbar() {
                 type="search"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Tìm kiếm sản phẩm..."
+                placeholder="Tìm nồi chiên, robot, bếp từ, thiết bị gia dụng..."
                 className="w-full bg-slate-900 border border-slate-700/80 rounded-full py-2 pl-4 pr-10 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 transition"
               />
               <button
@@ -284,7 +284,7 @@ export default function Navbar() {
                 type="search"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Tìm kiếm sản phẩm..."
+                placeholder="Tìm nồi chiên, robot, bếp từ, thiết bị gia dụng..."
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 pl-4 pr-10 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-rose-500"
               />
               <button type="submit" className="absolute right-3 text-slate-400 hover:text-white">

@@ -22,10 +22,11 @@ export default function CartPage() {
 
   const handleApplyVoucher = (e: React.FormEvent) => {
     e.preventDefault();
-    if (voucherCode.trim().toUpperCase() === "FASHION10") {
+    const code = voucherCode.trim().toUpperCase();
+    if (code === "GIADUNG10" || code === "FASHION10" || code === "HOME10") {
       setDiscountPercent(10);
-      setAppliedVoucher("FASHION10");
-      showToast("Áp dụng mã giảm giá FASHION10 thành công (-10%)!", "success");
+      setAppliedVoucher(code);
+      showToast(`Áp dụng mã giảm giá ${code} thành công (-10%)!`, "success");
     } else {
       showToast("Mã giảm giá không hợp lệ hoặc đã hết hạn!", "error");
     }
@@ -64,7 +65,7 @@ export default function CartPage() {
           </div>
           <h2 className="text-2xl font-black text-slate-800 mb-2">Giỏ hàng của bạn đang trống</h2>
           <p className="text-slate-500 text-sm mb-6 leading-relaxed">
-            Bạn chưa chọn bất kỳ món đồ nào. Hãy khám phá ngay các bộ sưu tập thời trang hot nhất hôm nay!
+            Bạn chưa chọn bất kỳ thiết bị nào. Hãy khám phá ngay các sản phẩm đồ gia dụng thông minh hot nhất hôm nay!
           </p>
           <Link
             href="/products"

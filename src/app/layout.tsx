@@ -15,8 +15,8 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "FashionStore - Cửa Hàng Thời Trang Cao Cấp",
-  description: "Thương hiệu thời trang cao cấp mang phong cách hiện đại, thanh lịch và dẫn đầu xu hướng.",
+  title: "HomeLiving - Siêu Thị Đồ Gia Dụng & Thiết Bị Thông Minh",
+  description: "Hệ thống phân phối thiết bị nhà bếp, đồ gia dụng thông minh và tiện ích gia đình cao cấp chính hãng, bảo hành 12 - 24 tháng.",
 };
 
 export default function RootLayout({

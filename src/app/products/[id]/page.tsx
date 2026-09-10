@@ -193,13 +193,13 @@ export default function ProductDetailPage() {
               <div className="mb-6">
                 <div className="flex items-center justify-between mb-2">
                   <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-                    Kích thước: <span className="text-rose-600 font-semibold">{selectedSize}</span>
+                    Phiên bản / Dung tích: <span className="text-rose-600 font-semibold">{selectedSize}</span>
                   </label>
                   <button
-                    onClick={() => showToast("Bảng size: S (<50kg), M (50-60kg), L (60-70kg), XL (>70kg)", "info")}
+                    onClick={() => showToast("Sản phẩm bảo hành chính hãng 12-24 tháng. Đổi mới 30 ngày nếu phát sinh lỗi kỹ thuật!", "info")}
                     className="text-xs text-rose-600 hover:underline font-semibold"
                   >
-                    Hướng dẫn chọn size
+                    Chính sách bảo hành
                   </button>
                 </div>
                 <div className="flex flex-wrap gap-2.5">
@@ -208,7 +208,7 @@ export default function ProductDetailPage() {
                       key={size}
                       type="button"
                       onClick={() => setSelectedSize(size)}
-                      className={`w-12 h-11 text-xs font-bold rounded-xl border transition flex items-center justify-center ${
+                      className={`px-4 h-11 text-xs font-bold rounded-xl border transition flex items-center justify-center ${
                         selectedSize === size
                           ? "border-rose-600 bg-rose-600 text-white shadow-md shadow-rose-600/30"
                           : "border-slate-200 text-slate-700 hover:border-slate-300 bg-white"
@@ -347,13 +347,13 @@ export default function ProductDetailPage() {
         {activeTab === "desc" && (
           <div className="prose max-w-none text-slate-600 text-sm leading-relaxed space-y-4">
             <p>
-              {product.name} là sản phẩm được thiết kế độc quyền tại FashionStore, kết hợp tinh tế giữa phong cách hiện đại và sự tiện dụng hàng ngày.
+              {product.name} là dòng thiết bị gia dụng cao cấp phân phối chính hãng bởi HomeLiving, tích hợp công nghệ hiện đại mang đến trải nghiệm sống tiện nghi, an toàn và tiết kiệm điện năng.
             </p>
             <ul className="list-disc pl-5 space-y-2">
-              <li><strong>Chất liệu:</strong> Vải cao cấp chọn lọc, thấm hút mồ hôi tối đa, mềm mại khi tiếp xúc với da.</li>
-              <li><strong>Form dáng:</strong> Được đo đạc chuẩn chỉnh theo kích thước hình thể người Á Đông.</li>
-              <li><strong>Màu sắc:</strong> Nhuộm bằng công nghệ tự nhiên bền màu, không bay màu sau nhiều lần giặt.</li>
-              <li><strong>Bảo quản:</strong> Giặt tay hoặc giặt máy ở chế độ nhẹ nhàng, phơi nơi thoáng gió tránh nắng gắt trực tiếp.</li>
+              <li><strong>Chất liệu & Cấu tạo:</strong> Thép không gỉ Inox 304, nhựa nguyên sinh ABS/PP chịu nhiệt và kính cường lực cao cấp đạt tiêu chuẩn an toàn sức khỏe.</li>
+              <li><strong>Động cơ & Tiết kiệm điện:</strong> Vận hành êm ái, công nghệ biến tần Inverter tiết kiệm năng lượng tối ưu.</li>
+              <li><strong>Tính năng an toàn:</strong> Cảm biến tự động ngắt khi quá nhiệt, quá tải điện hoặc khi bị nghiêng đổ.</li>
+              <li><strong>Bảo hành & Hậu mãi:</strong> Bảo hành chính hãng 12 - 24 tháng, hỗ trợ 1 đổi 1 tận nơi trong 30 ngày nếu có lỗi từ nhà sản xuất.</li>
             </ul>
           </div>
         )}
@@ -366,14 +366,14 @@ export default function ProductDetailPage() {
               id: "static-1",
               userName: "Hoàng Mai Linh",
               rating: 5,
-              content: "Sản phẩm đẹp ngoài sức mong đợi, form may chuẩn, vải dày dặn mà mặc không bị nóng! Shop giao hàng đóng gói rất cẩn thận.",
+              content: "Sản phẩm hoàn thiện rất tỉ mỉ, cầm đầm tay chắc chắn. Dùng thử thấy máy hoạt động êm, tiết kiệm điện và làm sạch/nấu nướng cực kỳ nhanh gọn. Shop đóng gói nhiều lớp mút xốp cẩn thận!",
               createdAt: "2 ngày trước",
             },
             {
               id: "static-2",
               userName: "Trần Quốc Bảo",
               rating: 5,
-              content: "Đã mua lần thứ 3 ở shop, lần nào cũng ưng ý hết. Mặc đi làm ai cũng khen lịch sự và sang trọng. Sẽ tiếp tục ủng hộ!",
+              content: "Đã mua món thứ 2 ở HomeLiving, lần nào cũng ưng ý. Hàng chính hãng có tem bảo hành đầy đủ, nhân viên tư vấn nhiệt tình. Sẽ giới thiệu cho bạn bè và người thân!",
               createdAt: "1 tuần trước",
             },
           ];

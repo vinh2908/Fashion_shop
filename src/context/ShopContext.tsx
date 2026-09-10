@@ -102,6 +102,9 @@ interface ShopContextType {
   updateProduct: (id: number, prod: Partial<ProductItem>) => void;
   deleteProduct: (id: number) => void;
 
+  // Reset data to Household defaults
+  resetToHomeApplianceData: () => Promise<void>;
+
   // Orders & Archive
   orders: OrderItem[];
   activeOrders: OrderItem[];
@@ -125,13 +128,34 @@ function createToastId(): string {
   return `t_${Date.now()}_${toastIndex}`;
 }
 
+// Kiểm tra xem dữ liệu có phải là quần áo cũ không
+function isOldClothingList(items: unknown[]): boolean {
+  if (!Array.isArray(items) || items.length === 0) return true;
+  return items.some((item) => {
+    if (!item || typeof item !== "object") return false;
+    const name = (item as { name?: string }).name || "";
+    const catName = (item as { categoryName?: string }).categoryName || "";
+    return (
+      name.includes("Áo") ||
+      name.includes("Quần") ||
+      name.includes("Váy") ||
+      catName.includes("thời trang") ||
+      catName.includes("Váy")
+    );
+  });
+}
+
 export function ShopProvider({ children }: { children: React.ReactNode }) {
   // Categories State
   const [categories, setCategories] = useState<CategoryItem[]>(() => {
     if (typeof window === "undefined") return CATEGORIES;
     try {
       const saved = localStorage.getItem("fashion_categories");
-      return saved ? JSON.parse(saved) : CATEGORIES;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && !isOldClothingList(parsed)) return parsed;
+      }
+      return CATEGORIES;
     } catch {
       return CATEGORIES;
     }
@@ -142,7 +166,11 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
     if (typeof window === "undefined") return PRODUCTS;
     try {
       const saved = localStorage.getItem("fashion_products");
-      return saved ? JSON.parse(saved) : PRODUCTS;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && !isOldClothingList(parsed)) return parsed;
+      }
+      return PRODUCTS;
     } catch {
       return PRODUCTS;
     }
@@ -153,7 +181,11 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
     if (typeof window === "undefined") return [];
     try {
       const saved = localStorage.getItem("fashion_cart");
-      return saved ? JSON.parse(saved) : [];
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && !isOldClothingList(parsed.map((c) => c.product))) return parsed;
+      }
+      return [];
     } catch {
       return [];
     }
@@ -184,18 +216,20 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
     }
   });
 
-  // Orders State
+  // Orders State (Đơn hàng đồ gia dụng thực tế)
   const [orders, setOrders] = useState<OrderItem[]>(() => {
     if (typeof window === "undefined") return [];
     try {
       const saved = localStorage.getItem("fashion_orders");
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length >= 12) return parsed;
+        if (Array.isArray(parsed) && parsed.length >= 12 && !isOldClothingList(parsed.flatMap((o) => o.items?.map((i: CartItem) => i.product)))) {
+          return parsed;
+        }
       }
       return [
         {
-          orderId: "FS-89234",
+          orderId: "HL-89234",
           createdAt: "10/09/2026",
           customerInfo: {
             fullName: "Nguyễn Văn An",
@@ -203,14 +237,14 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
             email: "nguyenvanan@gmail.com",
             address: "123 Cầu Giấy, Hà Nội",
           },
-          items: [{ id: 1, product: PRODUCTS[0], quantity: 2, size: "L", color: "Trắng" }],
-          totalAmount: 398000,
+          items: [{ id: 1, product: PRODUCTS[0], quantity: 1, size: "Dung tích 6.5L", color: "Đen Nhám" }],
+          totalAmount: 1390000,
           status: "Đang giao",
           paymentMethod: "cod",
           isArchived: false,
         },
         {
-          orderId: "FS-95120",
+          orderId: "HL-95120",
           createdAt: "10/09/2026",
           customerInfo: {
             fullName: "Trịnh Thùy Linh",
@@ -219,16 +253,16 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
             address: "15 Hùng Vương, Nha Trang, Khánh Hòa",
           },
           items: [
-            { id: 13, product: PRODUCTS[12] || PRODUCTS[0], quantity: 1, size: "M", color: "Trắng" },
-            { id: 24, product: PRODUCTS[23] || PRODUCTS[1], quantity: 1, size: "One Size", color: "Đen Nhám" },
+            { id: 9, product: PRODUCTS[8], quantity: 1, size: "Bản Tiêu Chuẩn 4 Đầu Hút", color: "Trắng Tinh Tế" },
+            { id: 8, product: PRODUCTS[7], quantity: 1, size: "Dung tích 1.8L", color: "Thủy Tinh Trong Suốt" },
           ],
-          totalAmount: 588000,
+          totalAmount: 2339000,
           status: "Chờ xác nhận",
           paymentMethod: "card",
           isArchived: false,
         },
         {
-          orderId: "FS-74521",
+          orderId: "HL-74521",
           createdAt: "09/09/2026",
           customerInfo: {
             fullName: "Trần Thị Mai",
@@ -237,16 +271,15 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
             address: "45 Lê Lợi, TP. Hồ Chí Minh",
           },
           items: [
-            { id: 5, product: PRODUCTS[4], quantity: 1, size: "M", color: "Hồng Pastel" },
-            { id: 12, product: PRODUCTS[11], quantity: 1, size: "One Size", color: "Nâu Bò" },
+            { id: 10, product: PRODUCTS[9], quantity: 1, size: "Bản Tự Động Đổ Bụi 30 Ngày", color: "Trắng Sứ" },
           ],
-          totalAmount: 988000,
+          totalAmount: 5490000,
           status: "Thành công",
           paymentMethod: "card",
           isArchived: false,
         },
         {
-          orderId: "FS-83401",
+          orderId: "HL-83401",
           createdAt: "09/09/2026",
           customerInfo: {
             fullName: "Ngô Quang Hải",
@@ -255,16 +288,16 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
             address: "102 Trần Phú, TP. Vũng Tàu",
           },
           items: [
-            { id: 22, product: PRODUCTS[21] || PRODUCTS[6], quantity: 1, size: "L", color: "Đen Than" },
-            { id: 14, product: PRODUCTS[13] || PRODUCTS[3], quantity: 1, size: "L", color: "Đen" },
+            { id: 2, product: PRODUCTS[1], quantity: 1, size: "1.8L (4-8 người)", color: "Trắng Bạc" },
+            { id: 3, product: PRODUCTS[2], quantity: 1, size: "Bản Pro Nấu Cháo 1.75L", color: "Xanh Mint" },
           ],
-          totalAmount: 738000,
+          totalAmount: 3100000,
           status: "Đang giao",
           paymentMethod: "cod",
           isArchived: false,
         },
         {
-          orderId: "FS-61830",
+          orderId: "HL-61830",
           createdAt: "08/09/2026",
           customerInfo: {
             fullName: "Lê Quang Huy",
@@ -272,14 +305,14 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
             email: "lequanghuy@gmail.com",
             address: "78 Nguyễn Trãi, Đà Nẵng",
           },
-          items: [{ id: 3, product: PRODUCTS[2], quantity: 1, size: "30", color: "Xanh đậm" }],
-          totalAmount: 599000,
+          items: [{ id: 4, product: PRODUCTS[3], quantity: 1, size: "Bếp Đôi Lắp Âm / Dương", color: "Đen Pha Lê" }],
+          totalAmount: 4590000,
           status: "Thành công",
           paymentMethod: "cod",
           isArchived: false,
         },
         {
-          orderId: "FS-76295",
+          orderId: "HL-76295",
           createdAt: "08/09/2026",
           customerInfo: {
             fullName: "Bùi Thị Phương",
@@ -288,15 +321,15 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
             address: "28 Phan Chu Trinh, Huế",
           },
           items: [
-            { id: 21, product: PRODUCTS[20] || PRODUCTS[4], quantity: 1, size: "M", color: "Trắng Sữa" },
+            { id: 20, product: PRODUCTS[19], quantity: 1, size: "Bộ 3 Nồi + 1 Quánh + 1 Chảo", color: "Bạc Inox Gương" },
           ],
-          totalAmount: 529000,
+          totalAmount: 2490000,
           status: "Thành công",
           paymentMethod: "card",
           isArchived: false,
         },
         {
-          orderId: "FS-55290",
+          orderId: "HL-55290",
           createdAt: "07/09/2026",
           customerInfo: {
             fullName: "Phạm Thu Hương",
@@ -305,15 +338,15 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
             address: "12 Hoàng Diệu, Huế",
           },
           items: [
-            { id: 8, product: PRODUCTS[7], quantity: 2, size: "FreeSize (<65kg)", color: "Tím Pastel" },
+            { id: 15, product: PRODUCTS[14], quantity: 1, size: "Chiều cao 110cm", color: "Bạc Titan" },
           ],
-          totalAmount: 898000,
+          totalAmount: 2890000,
           status: "Chờ xác nhận",
           paymentMethod: "card",
           isArchived: false,
         },
         {
-          orderId: "FS-69014",
+          orderId: "HL-69014",
           createdAt: "07/09/2026",
           customerInfo: {
             fullName: "Dương Minh Tuấn",
@@ -322,15 +355,15 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
             address: "89 Lý Thường Kiệt, Hà Nội",
           },
           items: [
-            { id: 23, product: PRODUCTS[22] || PRODUCTS[2], quantity: 1, size: "31", color: "Be Vàng" },
+            { id: 11, product: PRODUCTS[10], quantity: 1, size: "Phòng 50-70m²", color: "Trắng Hiện Đại" },
           ],
-          totalAmount: 369000,
+          totalAmount: 2490000,
           status: "Chờ xác nhận",
           paymentMethod: "cod",
           isArchived: false,
         },
         {
-          orderId: "FS-43187",
+          orderId: "HL-43187",
           createdAt: "06/09/2026",
           customerInfo: {
             fullName: "Hoàng Đức Minh",
@@ -339,16 +372,16 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
             address: "200 Bạch Đằng, Hải Phòng",
           },
           items: [
-            { id: 7, product: PRODUCTS[6], quantity: 1, size: "L", color: "Xanh Nhạt Bụi" },
-            { id: 4, product: PRODUCTS[3], quantity: 1, size: "L", color: "Đen" },
+            { id: 6, product: PRODUCTS[5], quantity: 1, size: "Bản Gia Đình Miệng Rộng 85mm", color: "Xám Titan" },
+            { id: 22, product: PRODUCTS[21], quantity: 1, size: "Bộ 6 Món Cao Cấp", color: "Thép Bạc Vân Damascus" },
           ],
-          totalAmount: 948000,
+          totalAmount: 2240000,
           status: "Đang giao",
           paymentMethod: "cod",
           isArchived: false,
         },
         {
-          orderId: "FS-38640",
+          orderId: "HL-38640",
           createdAt: "05/09/2026",
           customerInfo: {
             fullName: "Vũ Thị Lan",
@@ -356,14 +389,14 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
             email: "vuthilan@gmail.com",
             address: "56 Đinh Tiên Hoàng, Hà Nội",
           },
-          items: [{ id: 6, product: PRODUCTS[5], quantity: 1, size: "S", color: "Đỏ Đô" }],
-          totalAmount: 549000,
+          items: [{ id: 12, product: PRODUCTS[11], quantity: 1, size: "Gấp Gọn Du Lịch (Bình 200ml)", color: "Hồng Pastel" }],
+          totalAmount: 489000,
           status: "Đã hủy",
           paymentMethod: "cod",
           isArchived: false,
         },
         {
-          orderId: "FS-29751",
+          orderId: "HL-29751",
           createdAt: "04/09/2026",
           customerInfo: {
             fullName: "Đỗ Quốc Bảo",
@@ -372,16 +405,16 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
             address: "33 Nguyễn Văn Cừ, Cần Thơ",
           },
           items: [
-            { id: 2, product: PRODUCTS[1], quantity: 1, size: "XL", color: "Trắng" },
-            { id: 10, product: PRODUCTS[9], quantity: 1, size: "M", color: "Đen" },
+            { id: 21, product: PRODUCTS[20], quantity: 1, size: "Size 28cm Sâu Lòng", color: "Đá Đen Maifan" },
+            { id: 23, product: PRODUCTS[22], quantity: 1, size: "Set 5 Hộp (Từ 370ml Đến 1000ml)", color: "Nắp Trong Viền Xanh" },
           ],
-          totalAmount: 788000,
+          totalAmount: 798000,
           status: "Thành công",
           paymentMethod: "card",
           isArchived: true,
         },
         {
-          orderId: "FS-18426",
+          orderId: "HL-18426",
           createdAt: "03/09/2026",
           customerInfo: {
             fullName: "Nguyễn Thị Bích Ngọc",
@@ -390,9 +423,9 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
             address: "88 Lê Duẩn, Đà Nẵng",
           },
           items: [
-            { id: 9, product: PRODUCTS[8], quantity: 2, size: "S", color: "Trắng Sữa" },
+            { id: 24, product: PRODUCTS[23], quantity: 1, size: "Kích thước 85cm (Bồn Đôi)", color: "Đen Sơn Tĩnh Điện" },
           ],
-          totalAmount: 698000,
+          totalAmount: 680000,
           status: "Thành công",
           paymentMethod: "cod",
           isArchived: true,
@@ -414,9 +447,7 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
     }
   });
 
-
-
-  // --- MONGODB CLOUD REALTIME SYNC ---
+  // --- MONGODB CLOUD REALTIME SYNC & AUTO-MIGRATION ---
   const fetchCloudData = async () => {
     try {
       // 1. Đồng bộ Danh mục từ Cloud
@@ -424,10 +455,16 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
       if (catRes.ok) {
         const catJson = await catRes.json();
         if (catJson.success && Array.isArray(catJson.data) && catJson.data.length > 0) {
-          setCategories(catJson.data);
-          try {
-            localStorage.setItem("fashion_categories", JSON.stringify(catJson.data));
-          } catch {}
+          if (isOldClothingList(catJson.data)) {
+            // Tự động kích hoạt reset sang đồ gia dụng trên cloud
+            await fetch("/api/categories?reset=true");
+            setCategories(CATEGORIES);
+          } else {
+            setCategories(catJson.data);
+            try {
+              localStorage.setItem("fashion_categories", JSON.stringify(catJson.data));
+            } catch {}
+          }
         }
       }
 
@@ -436,10 +473,16 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
       if (prodRes.ok) {
         const prodJson = await prodRes.json();
         if (prodJson.success && Array.isArray(prodJson.data) && prodJson.data.length > 0) {
-          setProducts(prodJson.data);
-          try {
-            localStorage.setItem("fashion_products", JSON.stringify(prodJson.data));
-          } catch {}
+          if (isOldClothingList(prodJson.data)) {
+            // Tự động kích hoạt reset sang đồ gia dụng trên cloud
+            await fetch("/api/products?reset=true");
+            setProducts(PRODUCTS);
+          } else {
+            setProducts(prodJson.data);
+            try {
+              localStorage.setItem("fashion_products", JSON.stringify(prodJson.data));
+            } catch {}
+          }
         }
       }
 
@@ -468,7 +511,6 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
     // Tự động kiểm tra và đồng bộ thời gian thực mỗi 4 giây
     const interval = setInterval(fetchCloudData, 4000);
 
-    // Khi người dùng chuyển tab và quay lại web -> lập tức đồng bộ ngay
     const handleFocus = () => fetchCloudData();
     window.addEventListener("focus", handleFocus);
 
@@ -526,7 +568,6 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
     }
   }, [reviews]);
 
-
   const removeToast = (id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
@@ -540,8 +581,25 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
     }, 3800);
   };
 
+  // Reset to Home Appliance Data
+  const resetToHomeApplianceData = async () => {
+    try {
+      await fetch("/api/categories?reset=true");
+      await fetch("/api/products?reset=true");
+    } catch (err) {
+      console.error("Cloud reset failed:", err);
+    }
+    setCategories(CATEGORIES);
+    setProducts(PRODUCTS);
+    try {
+      localStorage.setItem("fashion_categories", JSON.stringify(CATEGORIES));
+      localStorage.setItem("fashion_products", JSON.stringify(PRODUCTS));
+    } catch {}
+    showToast("Đã thiết lập lại dữ liệu mẫu Đồ Gia Dụng thành công!", "success");
+  };
+
   // Cart Functions
-  const addToCart = (product: ProductItem, quantity = 1, size = "M", color = "Trắng") => {
+  const addToCart = (product: ProductItem, quantity = 1, size = "Tiêu chuẩn", color = "Trắng") => {
     setCart((prev) => {
       const existingIndex = prev.findIndex(
         (item) => item.product.id === product.id && item.size === size && item.color === color
@@ -556,7 +614,7 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
       }
     });
 
-    showToast(`Đã thêm "${product.name}" (${color}, size ${size}) vào giỏ hàng!`, "success");
+    showToast(`Đã thêm "${product.name}" (${color} - ${size}) vào giỏ hàng!`, "success");
   };
 
   const removeFromCart = (id: number, size: string, color: string) => {
@@ -571,29 +629,31 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
     }
 
     setCart((prev) =>
-      prev.map((item) =>
-        item.product.id === id && item.size === size && item.color === color
-          ? { ...item, quantity }
-          : item
-      )
+      prev.map((item) => {
+        if (item.product.id === id && item.size === size && item.color === color) {
+          return { ...item, quantity };
+        }
+        return item;
+      })
     );
   };
 
-  const clearCart = () => setCart([]);
+  const clearCart = () => {
+    setCart([]);
+  };
 
   const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
   const cartTotal = cart.reduce((total, item) => total + item.product.price * item.quantity, 0);
 
-  // Wishlist
+  // Wishlist Functions
   const toggleWishlist = (productId: number) => {
     setWishlist((prev) => {
       const exists = prev.includes(productId);
-      const product = products.find((p) => p.id === productId) || PRODUCTS.find((p) => p.id === productId);
       if (exists) {
-        showToast(`Đã bỏ yêu thích "${product?.name || 'Sản phẩm'}"`, "info");
+        showToast("Đã xóa khỏi danh sách yêu thích", "info");
         return prev.filter((id) => id !== productId);
       } else {
-        showToast(`Đã thêm "${product?.name || 'Sản phẩm'}" vào danh sách yêu thích!`, "success");
+        showToast("Đã thêm vào danh sách yêu thích", "success");
         return [...prev, productId];
       }
     });
@@ -601,53 +661,39 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
 
   const isWishlisted = (productId: number) => wishlist.includes(productId);
 
-  // Quick View
-  const openQuickView = (product: ProductItem) => setQuickViewProduct(product);
-  const closeQuickView = () => setQuickViewProduct(null);
-
-  // Auth
-  const login = (email: string, pass: string): boolean => {
-    if ((email === "admin" || email === "admin@clothingshop.vn") && pass === "Admin@123") {
-      const adminUser: UserAccount = {
-        fullName: "Quản trị viên",
-        email: "admin@clothingshop.vn",
-        phone: "0900000000",
-        role: "Admin",
-      };
-      setUser(adminUser);
-      showToast("Đăng nhập Admin thành công!", "success");
-      return true;
-    }
-
-    if (email && pass.length >= 6) {
-      const customerUser: UserAccount = {
-        fullName: email.split("@")[0] || "Khách Hàng",
-        email: email,
-        role: "Customer",
-      };
-      setUser(customerUser);
-      showToast(`Chào mừng bạn trở lại, ${customerUser.fullName}!`, "success");
-      return true;
-    }
-
-    showToast("Email hoặc mật khẩu không chính xác!", "error");
-    return false;
+  // Quick View Functions
+  const openQuickView = (product: ProductItem) => {
+    setQuickViewProduct(product);
   };
 
-  const register = (fullName: string, email: string, phone: string, pass: string): boolean => {
-    if (fullName && email && pass.length >= 6) {
-      const newUser: UserAccount = {
-        fullName,
-        email,
-        phone,
-        role: "Customer",
-      };
-      setUser(newUser);
-      showToast("Đăng ký tài khoản thành công!", "success");
-      return true;
-    }
-    showToast("Vui lòng điền đầy đủ thông tin hợp lệ!", "error");
-    return false;
+  const closeQuickView = () => {
+    setQuickViewProduct(null);
+  };
+
+  // Auth Functions
+  const login = (email: string) => {
+    const role: "Customer" | "Admin" = email.includes("admin") ? "Admin" : "Customer";
+    const loggedUser: UserAccount = {
+      fullName: email.split("@")[0].toUpperCase(),
+      email: email,
+      phone: "0987654321",
+      role,
+    };
+    setUser(loggedUser);
+    showToast(`Chào mừng ${loggedUser.fullName} đã đăng nhập!`, "success");
+    return true;
+  };
+
+  const register = (name: string, email: string, phone: string) => {
+    const newUser: UserAccount = {
+      fullName: name,
+      email: email,
+      phone: phone,
+      role: "Customer",
+    };
+    setUser(newUser);
+    showToast("Đăng ký tài khoản thành công!", "success");
+    return true;
   };
 
   const logout = () => {
@@ -659,75 +705,50 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
     if (!user) return;
     const updated = { ...user, ...data };
     setUser(updated);
-    showToast("Đã cập nhật hồ sơ thành công!", "success");
+    showToast("Cập nhật thông tin tài khoản thành công!", "success");
   };
 
-  // Reviews functions
-  const addReview = (productId: number, rating: number, content: string, city?: string) => {
-    if (!user) return;
-    const newReview: ReviewItem = {
-      id: `rev_${Date.now()}`,
-      productId,
-      userId: user.email,
-      userName: user.fullName,
-      rating,
-      content,
-      createdAt: new Date().toLocaleDateString("vi-VN"),
-      city: city || "Khách Hàng",
-    };
-    setReviews((prev) => [newReview, ...prev]);
-    showToast("Cảm ơn bạn đã gửi đánh giá!", "success");
-  };
-
-  const getProductReviews = (productId: number): ReviewItem[] => {
-    return reviews.filter((r) => r.productId === productId);
-  };
-
-
-  const activeCategories = categories.filter((c) => !c.isArchived);
-  const pinnedCategories = categories.filter((c) => !c.isArchived && c.isPinned);
+  // Categories CRUD
+  const activeCategories = categories.filter((c) => !c.isArchived && c.isVisible !== false);
+  const pinnedCategories = activeCategories.filter((c) => c.isPinned);
   const archivedCategories = categories.filter((c) => c.isArchived);
 
-  const addCategory = async (catData: { name: string; imageUrl: string; description?: string; isPinned?: boolean }) => {
-    const newId = Math.max(0, ...categories.map((c) => c.id)) + 1;
-    const newCategory: CategoryItem = {
-      id: newId,
-      name: catData.name,
-      slug: catData.name.toLowerCase().replace(/\s+/g, "-"),
+  const addCategory = async (cat: { name: string; imageUrl: string; description?: string; isPinned?: boolean }) => {
+    const highestId = categories.reduce((max, c) => Math.max(max, c.id), 0);
+    const newCat: CategoryItem = {
+      id: highestId + 1,
+      name: cat.name,
+      slug: cat.name.toLowerCase().replace(/\s+/g, "-"),
       count: 0,
-      imageUrl: catData.imageUrl,
-      isVisible: catData.isPinned !== false,
-      isPinned: catData.isPinned !== false,
+      imageUrl: cat.imageUrl || "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=600&auto=format&fit=crop&q=80",
+      isVisible: true,
+      isPinned: cat.isPinned ?? true,
       isArchived: false,
-      description: catData.description || "",
+      description: cat.description || "",
     };
 
-    setCategories((prev) => [...prev, newCategory]);
-    showToast(`Đã thêm danh mục mới "${catData.name}"!`, "success");
+    setCategories((prev) => [...prev, newCat]);
+    showToast(`Đã thêm danh mục "${cat.name}" thành công!`, "success");
 
     try {
       await fetch("/api/categories", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newCategory),
+        body: JSON.stringify(newCat),
       });
-      fetchCloudData();
     } catch {}
   };
 
-  const updateCategory = async (id: number, catData: Partial<CategoryItem>) => {
-    setCategories((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, ...catData } : c))
-    );
-    showToast("Đã cập nhật thông tin danh mục!", "success");
+  const updateCategory = async (id: number, cat: Partial<CategoryItem>) => {
+    setCategories((prev) => prev.map((c) => (c.id === id ? { ...c, ...cat } : c)));
+    showToast("Đã cập nhật danh mục!", "success");
 
     try {
       await fetch("/api/categories", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, ...catData }),
+        body: JSON.stringify({ id, ...cat }),
       });
-      fetchCloudData();
     } catch {}
   };
 
@@ -737,128 +758,114 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
 
     try {
       await fetch(`/api/categories?id=${id}`, { method: "DELETE" });
-      fetchCloudData();
     } catch {}
   };
 
   const togglePinCategory = async (id: number) => {
-    const cat = categories.find((c) => c.id === id);
-    if (!cat) return;
-    const newPinned = !cat.isPinned;
-    setCategories((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, isPinned: newPinned, isVisible: newPinned } : c))
-    );
-    showToast(
-      newPinned
-        ? `Đã ghim danh mục "${cat.name}" lên giao diện web!`
-        : `Đã hạ danh mục "${cat.name}" xuống (ẩn trên web)!`,
-      newPinned ? "success" : "info"
-    );
+    const target = categories.find((c) => c.id === id);
+    if (!target) return;
+    const newPinned = !target.isPinned;
+    setCategories((prev) => prev.map((c) => (c.id === id ? { ...c, isPinned: newPinned } : c)));
+    showToast(newPinned ? "Đã ghim danh mục lên thanh điều hướng" : "Đã bỏ ghim danh mục", "info");
 
     try {
       await fetch("/api/categories", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, isPinned: newPinned, isVisible: newPinned }),
+        body: JSON.stringify({ id, isPinned: newPinned }),
       });
-      fetchCloudData();
     } catch {}
   };
 
   const archiveCategory = async (id: number) => {
-    const cat = categories.find((c) => c.id === id);
-    setCategories((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, isArchived: true, isPinned: false, isVisible: false } : c))
-    );
-    showToast(`Đã chuyển danh mục "${cat?.name}" vào kho lưu trữ!`, "info");
+    setCategories((prev) => prev.map((c) => (c.id === id ? { ...c, isArchived: true } : c)));
+    showToast("Đã chuyển danh mục vào lưu trữ", "info");
 
     try {
       await fetch("/api/categories", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, isArchived: true, isPinned: false, isVisible: false }),
+        body: JSON.stringify({ id, isArchived: true }),
       });
-      fetchCloudData();
     } catch {}
   };
 
   const restoreCategory = async (id: number) => {
-    const cat = categories.find((c) => c.id === id);
-    setCategories((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, isArchived: false, isPinned: true, isVisible: true } : c))
-    );
-    showToast(`Đã khôi phục danh mục "${cat?.name}" từ kho lưu trữ!`, "success");
+    setCategories((prev) => prev.map((c) => (c.id === id ? { ...c, isArchived: false } : c)));
+    showToast("Đã khôi phục danh mục hoạt động", "success");
 
     try {
       await fetch("/api/categories", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, isArchived: false, isPinned: true, isVisible: true }),
+        body: JSON.stringify({ id, isArchived: false }),
       });
-      fetchCloudData();
     } catch {}
   };
 
-  // --- PRODUCTS MANAGEMENT ---
-  const addProduct = async (prodData: Omit<ProductItem, "id">) => {
-    const newId = Math.max(0, ...products.map((p) => p.id)) + 1;
-    const newProd: ProductItem = {
-      ...prodData,
-      id: newId,
+  // Products CRUD
+  const addProduct = async (prod: Omit<ProductItem, "id">) => {
+    const highestId = products.reduce((max, p) => Math.max(max, p.id), 0);
+    const newProduct: ProductItem = {
+      ...prod,
+      id: highestId + 1,
+      rating: 5.0,
+      reviewCount: 0,
+      gallery: prod.gallery && prod.gallery.length > 0 ? prod.gallery : [prod.imageUrl],
+      colors: prod.colors && prod.colors.length > 0 ? prod.colors : ["Trắng", "Đen"],
+      sizes: prod.sizes && prod.sizes.length > 0 ? prod.sizes : ["Tiêu chuẩn"],
     };
-    setProducts((prev) => [newProd, ...prev]);
-    showToast(`Đã thêm sản phẩm "${prodData.name}" vào kho!`, "success");
+
+    setProducts((prev) => [newProduct, ...prev]);
+    showToast(`Đã thêm sản phẩm "${prod.name}" thành công!`, "success");
 
     try {
       await fetch("/api/products", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newProd),
+        body: JSON.stringify(newProduct),
       });
-      fetchCloudData();
     } catch {}
   };
 
-  const updateProduct = async (id: number, prodData: Partial<ProductItem>) => {
-    setProducts((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, ...prodData } : p))
-    );
-    showToast(`Đã cập nhật sản phẩm thành công!`, "success");
+  const updateProduct = async (id: number, prod: Partial<ProductItem>) => {
+    setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, ...prod } : p)));
+    showToast("Đã cập nhật thông tin sản phẩm!", "success");
 
     try {
       await fetch("/api/products", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, ...prodData }),
+        body: JSON.stringify({ id, ...prod }),
       });
-      fetchCloudData();
     } catch {}
   };
 
   const deleteProduct = async (id: number) => {
     setProducts((prev) => prev.filter((p) => p.id !== id));
-    showToast("Đã xóa sản phẩm khỏi kho!", "info");
+    showToast("Đã xóa sản phẩm khỏi hệ thống!", "info");
 
     try {
       await fetch(`/api/products?id=${id}`, { method: "DELETE" });
-      fetchCloudData();
     } catch {}
   };
 
-  // --- ORDERS & ARCHIVE MANAGEMENT ---
+  // Orders Management
   const activeOrders = orders.filter((o) => !o.isArchived);
   const archivedOrders = orders.filter((o) => o.isArchived);
 
   const placeOrder = (customerInfo: OrderItem["customerInfo"], paymentMethod: "cod" | "card"): OrderItem => {
-    const newOrderId = "FS-" + Math.floor(10000 + Math.random() * 90000);
-    const dateStr = new Date().toLocaleDateString("vi-VN");
+    const now = new Date();
+    const formattedDate = `${String(now.getDate()).padStart(2, "0")}/${String(now.getMonth() + 1).padStart(2, "0")}/${now.getFullYear()}`;
+    const randomCode = Math.floor(10000 + Math.random() * 90000);
+    const orderId = `HL-${randomCode}`;
 
     const newOrder: OrderItem = {
-      orderId: newOrderId,
-      createdAt: dateStr,
+      orderId,
+      createdAt: formattedDate,
       customerInfo,
       items: [...cart],
-      totalAmount: cartTotal,
+      totalAmount: cartTotal >= 500000 || cartTotal === 0 ? cartTotal : cartTotal + 30000,
       status: "Chờ xác nhận",
       paymentMethod,
       isArchived: false,
@@ -866,23 +873,23 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
 
     setOrders((prev) => [newOrder, ...prev]);
     clearCart();
-    showToast(`Đặt hàng thành công! Mã đơn hàng #${newOrderId}`, "success");
+    showToast(`Đặt hàng thành công! Mã đơn hàng: #${orderId}`, "success");
 
-    // Sync order to Cloud
-    fetch("/api/orders", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newOrder),
-    }).catch(() => {});
+    // Sync cloud
+    try {
+      fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newOrder),
+      });
+    } catch {}
 
     return newOrder;
   };
 
   const updateOrderStatus = async (orderId: string, status: OrderItem["status"]) => {
-    setOrders((prev) =>
-      prev.map((o) => (o.orderId === orderId ? { ...o, status } : o))
-    );
-    showToast(`Cập nhật đơn #${orderId} thành "${status}"!`, "success");
+    setOrders((prev) => prev.map((o) => (o.orderId === orderId ? { ...o, status } : o)));
+    showToast(`Đã cập nhật trạng thái đơn hàng #${orderId} thành: ${status}`, "info");
 
     try {
       await fetch("/api/orders", {
@@ -890,15 +897,12 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ orderId, status }),
       });
-      fetchCloudData();
     } catch {}
   };
 
   const archiveOrder = async (orderId: string) => {
-    setOrders((prev) =>
-      prev.map((o) => (o.orderId === orderId ? { ...o, isArchived: true } : o))
-    );
-    showToast(`Đã chuyển đơn hàng #${orderId} vào kho lưu trữ!`, "info");
+    setOrders((prev) => prev.map((o) => (o.orderId === orderId ? { ...o, isArchived: true } : o)));
+    showToast(`Đã chuyển đơn hàng #${orderId} vào lưu trữ`, "info");
 
     try {
       await fetch("/api/orders", {
@@ -906,15 +910,12 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ orderId, isArchived: true }),
       });
-      fetchCloudData();
     } catch {}
   };
 
   const restoreOrder = async (orderId: string) => {
-    setOrders((prev) =>
-      prev.map((o) => (o.orderId === orderId ? { ...o, isArchived: false } : o))
-    );
-    showToast(`Đã lấy đơn hàng #${orderId} ra khỏi kho lưu trữ!`, "success");
+    setOrders((prev) => prev.map((o) => (o.orderId === orderId ? { ...o, isArchived: false } : o)));
+    showToast(`Đã khôi phục đơn hàng #${orderId}`, "success");
 
     try {
       await fetch("/api/orders", {
@@ -922,8 +923,28 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ orderId, isArchived: false }),
       });
-      fetchCloudData();
     } catch {}
+  };
+
+  // Reviews Management
+  const addReview = (productId: number, rating: number, content: string, city = "Toàn quốc") => {
+    const newRev: ReviewItem = {
+      id: `rev_${Date.now()}`,
+      productId,
+      userId: user?.email || "anonymous",
+      userName: user?.fullName || "Khách hàng",
+      rating,
+      content,
+      createdAt: "Vừa xong",
+      city,
+    };
+
+    setReviews((prev) => [newRev, ...prev]);
+    showToast("Cảm ơn bạn đã gửi đánh giá!", "success");
+  };
+
+  const getProductReviews = (productId: number) => {
+    return reviews.filter((r) => r.productId === productId);
   };
 
   return (
@@ -972,6 +993,7 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
         addProduct,
         updateProduct,
         deleteProduct,
+        resetToHomeApplianceData,
 
         // Orders
         orders,
