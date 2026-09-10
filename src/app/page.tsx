@@ -18,17 +18,43 @@ import {
   BiHeadphone,
   BiRefresh,
   BiGift,
-  BiCheck
+  BiCheck,
+  BiEdit,
+  BiX,
 } from "react-icons/bi";
 import { FaTruck } from "react-icons/fa";
 
 export default function Home() {
-  const { addToCart, openQuickView, isWishlisted, toggleWishlist, showToast, pinnedCategories, products } = useShop();
+  const { addToCart, openQuickView, isWishlisted, toggleWishlist, showToast, pinnedCategories, products, user, reviews, addReview } = useShop();
 
   // Flash Sale Countdown
   const [timeLeft, setTimeLeft] = useState({ hours: 8, minutes: 42, seconds: 15 });
   const [activeTab, setActiveTab] = useState<"bestseller" | "new">("bestseller");
   const [copiedVoucher, setCopiedVoucher] = useState(false);
+
+  // Store Review / Testimonial State
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewContent, setReviewContent] = useState("");
+  const [reviewCity, setReviewCity] = useState("");
+  const [hoverRating, setHoverRating] = useState(0);
+
+  const handleStoreReviewSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) {
+      showToast("Vui lòng đăng nhập để gửi đánh giá!", "error");
+      return;
+    }
+    if (!reviewContent.trim()) {
+      showToast("Vui lòng nhập nội dung đánh giá!", "error");
+      return;
+    }
+    addReview(0, reviewRating, reviewContent.trim(), reviewCity.trim() || "Toàn quốc");
+    setIsReviewModalOpen(false);
+    setReviewContent("");
+    setReviewCity("");
+    setReviewRating(5);
+  };
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -264,7 +290,7 @@ export default function Home() {
           </div>
 
           {/* Flash Sale Product Cards Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mt-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mt-8">
             {flashSaleProducts.map((product) => {
               const discountPercent = Math.round(
                 ((product.originalPrice - product.price) / product.originalPrice) * 100
@@ -351,9 +377,10 @@ export default function Home() {
                       {/* Add to Cart Button */}
                       <button
                         onClick={() => addToCart(product, 1, product.sizes[0], product.colors[0])}
-                        className="w-full py-2 bg-slate-900 hover:bg-rose-600 text-white text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 shadow"
+                        className="w-full py-2 bg-slate-900 hover:bg-rose-600 text-white text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 shadow min-h-[36px]"
                       >
-                        <BiShoppingBag className="text-base" /> Thêm vào giỏ
+                        <BiShoppingBag className="text-base flex-shrink-0" />
+                        <span className="truncate">Thêm vào giỏ</span>
                       </button>
                     </div>
                   </div>
@@ -489,13 +516,13 @@ export default function Home() {
                   <span className="text-slate-400">({product.reviewCount})</span>
                 </div>
 
-                <div className="mt-auto pt-2 border-t border-slate-50 flex items-center justify-between">
-                  <span className="text-base font-extrabold text-rose-600">
+                <div className="mt-auto pt-2 border-t border-slate-50 flex items-center justify-between gap-2">
+                  <span className="text-sm font-extrabold text-rose-600 truncate">
                     {product.price.toLocaleString("vi-VN")}đ
                   </span>
                   <button
                     onClick={() => addToCart(product, 1, product.sizes[0], product.colors[0])}
-                    className="p-2 rounded-xl bg-slate-100 hover:bg-rose-600 hover:text-white text-slate-700 transition"
+                    className="p-2 rounded-xl bg-slate-100 hover:bg-rose-600 hover:text-white text-slate-700 transition flex-shrink-0"
                     title="Thêm vào giỏ"
                   >
                     <BiShoppingBag className="text-lg" />
@@ -548,83 +575,206 @@ export default function Home() {
 
       {/* Customer Testimonials */}
       <section className="container mx-auto px-4 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto mb-10">
-          <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">
-            Khách Hàng Nói Gì Về Chúng Tôi?
-          </h2>
-          <p className="text-slate-500 text-sm mt-2">
-            Hơn 10,000+ khách hàng trên cả nước đã trải nghiệm và đánh giá chất lượng sản phẩm
-          </p>
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 max-w-4xl mx-auto mb-10">
+          <div className="text-center sm:text-left">
+            <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">
+              Khách Hàng Nói Gì Về Chúng Tôi?
+            </h2>
+            <p className="text-slate-500 text-sm mt-1">
+              Hơn 10,000+ khách hàng trên cả nước đã trải nghiệm và đánh giá chất lượng sản phẩm
+            </p>
+          </div>
+
+          {user ? (
+            <button
+              onClick={() => setIsReviewModalOpen(true)}
+              className="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-sm shadow-md shadow-rose-600/30 flex items-center gap-2 transition flex-shrink-0"
+            >
+              <BiEdit className="text-lg" /> Viết đánh giá của bạn
+            </button>
+          ) : (
+            <Link
+              href="/login"
+              className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-rose-600 text-white font-bold text-sm shadow transition flex items-center gap-2 flex-shrink-0"
+            >
+              <BiEdit className="text-lg" /> Đăng nhập để đánh giá
+            </Link>
+          )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
-            <div>
-              <div className="flex text-amber-400 mb-3">
-                {[...Array(5)].map((_, i) => (
-                  <BiStar key={i} />
-                ))}
-              </div>
-              <p className="text-slate-600 text-sm italic mb-4 leading-relaxed">
-                “Chất vải linen áo sơ mi sờ cực thích, thoáng mát và chuẩn form dáng người Việt. Đóng gói hộp rất sang trọng, giao hàng chỉ trong 1 ngày!”
-              </p>
-            </div>
-            <div className="flex items-center gap-3 pt-3 border-t border-slate-100">
-              <div className="w-10 h-10 rounded-full bg-rose-100 text-rose-600 font-bold flex items-center justify-center text-sm">
-                NT
-              </div>
-              <div>
-                <div className="font-bold text-sm text-slate-900">Nguyễn Thu Trang</div>
-                <div className="text-xs text-slate-400">Hà Nội</div>
-              </div>
-            </div>
-          </div>
+        {(() => {
+          const storeReviews = reviews.filter((r) => r.productId === 0);
+          const defaultTestimonials = [
+            {
+              id: "t1",
+              userName: "Nguyễn Thu Trang",
+              city: "Hà Nội",
+              rating: 5,
+              content: "Chất vải linen áo sơ mi sờ cực thích, thoáng mát và chuẩn form dáng người Việt. Đóng gói hộp rất sang trọng, giao hàng chỉ trong 1 ngày!",
+              initials: "NT",
+              color: "bg-rose-100 text-rose-600",
+            },
+            {
+              id: "t2",
+              userName: "Hoàng Văn Vũ",
+              city: "TP. Hồ Chí Minh",
+              rating: 5,
+              content: "Quần jean co giãn rất êm chân, màu wash đẹp y hình. Đổi size được nhân viên hỗ trợ mang tận nơi đổi miễn phí, rất hài lòng với dịch vụ.",
+              initials: "HV",
+              color: "bg-blue-100 text-blue-600",
+            },
+            {
+              id: "t3",
+              userName: "Lê Lan Anh",
+              city: "Đà Nẵng",
+              rating: 5,
+              content: "Váy hoa nhí đi tiệc xinh xỉu, đường may chỉn chu không có chỉ thừa. Mặc lên tôn dáng lắm mọi người nên thử nhé!",
+              initials: "LA",
+              color: "bg-emerald-100 text-emerald-600",
+            },
+          ];
 
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
-            <div>
-              <div className="flex text-amber-400 mb-3">
-                {[...Array(5)].map((_, i) => (
-                  <BiStar key={i} />
-                ))}
-              </div>
-              <p className="text-slate-600 text-sm italic mb-4 leading-relaxed">
-                “Quần jean co giãn rất êm chân, màu wash đẹp y hình. Đổi size được nhân viên hỗ trợ mang tận nơi đổi miễn phí, rất hài lòng với dịch vụ.”
-              </p>
-            </div>
-            <div className="flex items-center gap-3 pt-3 border-t border-slate-100">
-              <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 font-bold flex items-center justify-center text-sm">
-                HV
-              </div>
-              <div>
-                <div className="font-bold text-sm text-slate-900">Hoàng Văn Vũ</div>
-                <div className="text-xs text-slate-400">TP. Hồ Chí Minh</div>
-              </div>
-            </div>
-          </div>
+          const allDisplayTestimonials = [
+            ...storeReviews.map((r) => ({
+              id: r.id,
+              userName: r.userName,
+              city: r.city || "Việt Nam",
+              rating: r.rating,
+              content: r.content,
+              initials: r.userName.split(" ").map((w) => w[0]).join("").slice(-2).toUpperCase() || "KH",
+              color: "bg-purple-100 text-purple-600",
+            })),
+            ...defaultTestimonials,
+          ];
 
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
-            <div>
-              <div className="flex text-amber-400 mb-3">
-                {[...Array(5)].map((_, i) => (
-                  <BiStar key={i} />
-                ))}
-              </div>
-              <p className="text-slate-600 text-sm italic mb-4 leading-relaxed">
-                “Váy hoa nhí đi tiệc xinh xỉu, đường may chỉn chu không có chỉ thừa. Mặc lên tôn dáng lắm mọi người nên thử nhé!”
-              </p>
+          return (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {allDisplayTestimonials.slice(0, 6).map((item) => (
+                <div key={item.id} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
+                  <div>
+                    <div className="flex text-amber-400 mb-3">
+                      {[...Array(item.rating)].map((_, i) => (
+                        <BiStar key={i} />
+                      ))}
+                    </div>
+                    <p className="text-slate-600 text-sm italic mb-4 leading-relaxed">
+                      “{item.content}”
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3 pt-3 border-t border-slate-100">
+                    <div className={`w-10 h-10 rounded-full font-bold flex items-center justify-center text-sm ${item.color}`}>
+                      {item.initials}
+                    </div>
+                    <div>
+                      <div className="font-bold text-sm text-slate-900">{item.userName}</div>
+                      <div className="text-xs text-slate-400">{item.city}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
-            <div className="flex items-center gap-3 pt-3 border-t border-slate-100">
-              <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 font-bold flex items-center justify-center text-sm">
-                LA
-              </div>
-              <div>
-                <div className="font-bold text-sm text-slate-900">Lê Lan Anh</div>
-                <div className="text-xs text-slate-400">Đà Nẵng</div>
-              </div>
-            </div>
-          </div>
-        </div>
+          );
+        })()}
       </section>
+
+      {/* Review Modal on Home Page */}
+      {isReviewModalOpen && user && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsReviewModalOpen(false)} />
+          <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 sm:p-8 border border-slate-100 animate-in fade-in zoom-in-95 duration-150">
+            <button
+              onClick={() => setIsReviewModalOpen(false)}
+              className="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition"
+            >
+              <BiX className="text-xl" />
+            </button>
+
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-2xl">
+                <BiEdit />
+              </div>
+              <div>
+                <h2 className="text-xl font-black text-slate-900">Đánh Giá Cửa Hàng</h2>
+                <p className="text-xs text-slate-500">Chia sẻ trải nghiệm mua sắm của bạn</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleStoreReviewSubmit} className="space-y-4">
+              <div>
+                <label className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-2 block">
+                  Mức độ hài lòng
+                </label>
+                <div className="flex items-center gap-1.5">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setReviewRating(star)}
+                      onMouseEnter={() => setHoverRating(star)}
+                      onMouseLeave={() => setHoverRating(0)}
+                      className="text-2xl transition-transform hover:scale-110"
+                    >
+                      <BiStar
+                        className={`${
+                          star <= (hoverRating || reviewRating)
+                            ? "text-amber-400"
+                            : "text-slate-300"
+                        } transition-colors`}
+                      />
+                    </button>
+                  ))}
+                  <span className="ml-2 text-xs text-slate-500 font-semibold">
+                    {["", "Rất tệ", "Tệ", "Bình thường", "Tốt", "Tuyệt vời"][hoverRating || reviewRating]}
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                  Tỉnh / Thành phố
+                </label>
+                <input
+                  type="text"
+                  value={reviewCity}
+                  onChange={(e) => setReviewCity(e.target.value)}
+                  placeholder="Ví dụ: Hà Nội, TP. Hồ Chí Minh..."
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 transition"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                  Nội dung đánh giá
+                </label>
+                <textarea
+                  required
+                  value={reviewContent}
+                  onChange={(e) => setReviewContent(e.target.value)}
+                  placeholder="Chất lượng sản phẩm, dịch vụ chăm sóc, thời gian giao hàng..."
+                  rows={4}
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 resize-none focus:outline-none focus:ring-2 focus:ring-rose-500 transition"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsReviewModalOpen(false)}
+                  className="flex-1 py-3 rounded-xl border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-sm transition shadow-lg shadow-rose-600/20"
+                >
+                  Gửi đánh giá
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
     </div>
   );

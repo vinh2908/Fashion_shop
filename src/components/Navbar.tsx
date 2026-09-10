@@ -19,17 +19,22 @@ import {
   BiMenu,
   BiX,
   BiChevronDown,
-  BiPhoneCall
+  BiPhoneCall,
+  BiEdit,
+  BiUser,
 } from "react-icons/bi";
 
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { cartCount, wishlist, user, logout, pinnedCategories } = useShop();
+  const { cartCount, wishlist, user, logout, pinnedCategories, updateProfile } = useShop();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [profileForm, setProfileForm] = useState({ fullName: "", phone: "" });
   const [searchQuery, setSearchQuery] = useState("");
+
 
   if (pathname?.startsWith("/admin")) return null;
 
@@ -221,6 +226,17 @@ export default function Navbar() {
                         <BiHistory className="text-lg text-sky-400" /> Đơn hàng của tôi
                       </Link>
 
+                      <button
+                        onClick={() => {
+                          setProfileForm({ fullName: user.fullName, phone: user.phone || "" });
+                          setIsUserDropdownOpen(false);
+                          setIsProfileModalOpen(true);
+                        }}
+                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-slate-300 hover:text-white hover:bg-slate-800 transition text-left"
+                      >
+                        <BiUser className="text-lg text-emerald-400" /> Chỉnh sửa hồ sơ
+                      </button>
+
                       {user.role === "Admin" && (
                         <Link
                           href="/admin"
@@ -336,30 +352,133 @@ export default function Navbar() {
                 </Link>
               </div>
             ) : (
-              <div className="mt-5 pt-4 border-t border-slate-800 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-rose-600 flex items-center justify-center font-bold text-white text-xs">
-                    {user.fullName.charAt(0).toUpperCase()}
+              <div className="mt-5 pt-4 border-t border-slate-800 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-rose-600 flex items-center justify-center font-bold text-white text-xs">
+                      {user.fullName.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <div className="text-sm font-bold text-white">{user.fullName}</div>
+                      <div className="text-xs text-slate-400">{user.email}</div>
+                    </div>
                   </div>
-                  <div>
-                    <div className="text-sm font-bold text-white">{user.fullName}</div>
-                    <div className="text-xs text-slate-400">{user.email}</div>
-                  </div>
+                  <button
+                    onClick={() => {
+                      logout();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="text-xs font-bold text-rose-400 hover:underline"
+                  >
+                    Đăng xuất
+                  </button>
                 </div>
+
                 <button
                   onClick={() => {
-                    logout();
+                    setProfileForm({ fullName: user.fullName, phone: user.phone || "" });
                     setIsMobileMenuOpen(false);
+                    setIsProfileModalOpen(true);
                   }}
-                  className="text-xs font-bold text-rose-400 hover:underline"
+                  className="w-full py-2.5 px-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition"
                 >
-                  Đăng xuất
+                  <BiEdit className="text-rose-400 text-base" /> Chỉnh sửa hồ sơ cá nhân
                 </button>
               </div>
             )}
           </div>
         )}
       </nav>
+
+      {/* Profile Edit Modal */}
+      {isProfileModalOpen && user && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsProfileModalOpen(false)} />
+          <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 border border-slate-100">
+            <button
+              onClick={() => setIsProfileModalOpen(false)}
+              className="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition"
+            >
+              <BiX className="text-xl" />
+            </button>
+
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-2xl">
+                <BiEdit />
+              </div>
+              <div>
+                <h2 className="text-xl font-black text-slate-900">Chỉnh sửa hồ sơ</h2>
+                <p className="text-xs text-slate-500">Cập nhật thông tin cá nhân của bạn</p>
+              </div>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                updateProfile({ fullName: profileForm.fullName, phone: profileForm.phone });
+                setIsProfileModalOpen(false);
+              }}
+              className="space-y-4"
+            >
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                  Họ và tên
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={profileForm.fullName}
+                  onChange={(e) => setProfileForm((p) => ({ ...p, fullName: e.target.value }))}
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 transition"
+                  placeholder="Nhập họ và tên"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  disabled
+                  value={user.email}
+                  className="w-full px-4 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-sm text-slate-400 cursor-not-allowed"
+                />
+                <p className="text-xs text-slate-400 mt-1">Email không thể thay đổi</p>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                  Số điện thoại
+                </label>
+                <input
+                  type="tel"
+                  value={profileForm.phone}
+                  onChange={(e) => setProfileForm((p) => ({ ...p, phone: e.target.value }))}
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 transition"
+                  placeholder="0912 345 678"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsProfileModalOpen(false)}
+                  className="flex-1 py-3 rounded-xl border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-sm transition shadow-lg shadow-rose-600/20"
+                >
+                  Lưu thay đổi
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </>
   );
 }

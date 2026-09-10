@@ -14,12 +14,15 @@ import {
   BiPhone,
   BiMapPin,
   BiCreditCard,
+  BiEdit,
 } from "react-icons/bi";
 
 export default function OrderHistoryPage() {
-  const { orders } = useShop();
+  const { orders, user, updateProfile } = useShop();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedOrder, setSelectedOrder] = useState<OrderItem | null>(null);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [profileForm, setProfileForm] = useState({ fullName: "", phone: "" });
 
   const filteredOrders = orders.filter((o) =>
     o.orderId.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
@@ -47,6 +50,44 @@ export default function OrderHistoryPage() {
         <span>/</span>
         <span className="text-slate-900 font-bold">Lịch sử đơn hàng</span>
       </nav>
+
+      {/* User Profile Card */}
+      {user ? (
+        <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-500 to-rose-700 text-white font-black text-xl flex items-center justify-center shadow-md shadow-rose-600/30 flex-shrink-0">
+              {user.fullName.charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="font-extrabold text-slate-900 text-base">{user.fullName}</h3>
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-600 border border-rose-200">
+                  {user.role === "Admin" ? "Quản trị viên" : "Thành viên"}
+                </span>
+              </div>
+              <div className="text-xs text-slate-500 mt-0.5 flex flex-wrap items-center gap-3">
+                <span>📧 {user.email}</span>
+                {user.phone && <span>📞 {user.phone}</span>}
+              </div>
+            </div>
+          </div>
+          <button
+            onClick={() => {
+              setProfileForm({ fullName: user.fullName, phone: user.phone || "" });
+              setIsProfileModalOpen(true);
+            }}
+            className="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:text-rose-600 hover:border-rose-300 font-bold text-xs flex items-center gap-2 transition bg-slate-50 hover:bg-white"
+          >
+            <BiEdit className="text-base text-rose-500" /> Chỉnh sửa hồ sơ
+          </button>
+        </div>
+      ) : (
+        <div className="bg-amber-50/80 border border-amber-200/80 rounded-2xl p-4 mb-8 flex items-center justify-between gap-4">
+          <div className="text-xs text-amber-800">
+            💡 Bạn đang xem đơn hàng với tư cách khách vãng lai. Hãy <Link href="/login" className="font-bold underline text-rose-600">Đăng nhập</Link> để quản lý hồ sơ và cập nhật thông tin cá nhân.
+          </div>
+        </div>
+      )}
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
@@ -280,6 +321,95 @@ export default function OrderHistoryPage() {
           </div>
         )}
       </AnimatePresence>
+      {/* Profile Edit Modal */}
+      {isProfileModalOpen && user && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsProfileModalOpen(false)} />
+          <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 sm:p-8 border border-slate-100 animate-in fade-in zoom-in-95 duration-150">
+            <button
+              onClick={() => setIsProfileModalOpen(false)}
+              className="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition"
+            >
+              <BiX className="text-xl" />
+            </button>
+
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-2xl">
+                <BiEdit />
+              </div>
+              <div>
+                <h2 className="text-xl font-black text-slate-900">Chỉnh sửa hồ sơ</h2>
+                <p className="text-xs text-slate-500">Cập nhật thông tin cá nhân của bạn</p>
+              </div>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                updateProfile({ fullName: profileForm.fullName, phone: profileForm.phone });
+                setIsProfileModalOpen(false);
+              }}
+              className="space-y-4"
+            >
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                  Họ và tên
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={profileForm.fullName}
+                  onChange={(e) => setProfileForm((p) => ({ ...p, fullName: e.target.value }))}
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 transition"
+                  placeholder="Nhập họ và tên"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  disabled
+                  value={user.email}
+                  className="w-full px-4 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-sm text-slate-400 cursor-not-allowed"
+                />
+                <p className="text-xs text-slate-400 mt-1">Email không thể thay đổi</p>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                  Số điện thoại
+                </label>
+                <input
+                  type="tel"
+                  value={profileForm.phone}
+                  onChange={(e) => setProfileForm((p) => ({ ...p, phone: e.target.value }))}
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 transition"
+                  placeholder="0912 345 678"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsProfileModalOpen(false)}
+                  className="flex-1 py-3 rounded-xl border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-sm transition shadow-lg shadow-rose-600/20"
+                >
+                  Lưu thay đổi
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ProductItem, CategoryItem } from "@/data/products";
@@ -30,6 +30,7 @@ import {
   BiPhone,
   BiMapPin,
   BiCreditCard,
+  BiBell,
 } from "react-icons/bi";
 
 interface CustomerItem {
@@ -72,7 +73,14 @@ export default function AdminDashboard() {
   } = useShop();
 
   const [activeTab, setActiveTab] = useState<"overview" | "products" | "categories" | "orders" | "customers">("overview");
-  const [isSidebarOpen, setSidebarOpen] = useState(true);
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth >= 768) {
+      setSidebarOpen(true);
+    }
+  }, []);
 
   // Sub-tabs
   const [categorySubTab, setCategorySubTab] = useState<"active" | "archive">("active");
@@ -345,8 +353,16 @@ export default function AdminDashboard() {
   });
 
   return (
-    <div className="flex h-screen bg-slate-100 font-sans overflow-hidden">
+    <div className="flex h-screen bg-slate-100 font-sans overflow-hidden relative">
       
+      {/* Mobile Backdrop */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 z-30 md:hidden backdrop-blur-xs"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
       <aside
         className={`bg-slate-950 text-white flex flex-col fixed md:relative h-full z-40 transition-all duration-300 shadow-2xl ${
@@ -490,6 +506,68 @@ export default function AdminDashboard() {
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Order Notifications in Admin */}
+            <div className="relative">
+              <button
+                onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+                className="relative p-2.5 rounded-xl text-slate-600 hover:bg-slate-100 transition flex items-center justify-center"
+                title="Thông báo đơn hàng"
+              >
+                <BiBell className="text-2xl" />
+                {activeOrders.filter((o) => o.status === "Chờ xác nhận").length > 0 && (
+                  <span className="absolute top-1 right-1 w-5 h-5 bg-rose-600 text-white text-[11px] font-black rounded-full flex items-center justify-center shadow-md animate-pulse">
+                    {activeOrders.filter((o) => o.status === "Chờ xác nhận").length}
+                  </span>
+                )}
+              </button>
+
+              {isNotificationOpen && (
+                <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-slate-200 py-3 z-50 text-slate-800 animate-in fade-in slide-in-from-top-2 duration-150">
+                  <div className="px-4 pb-2.5 border-b border-slate-100 flex items-center justify-between">
+                    <span className="font-bold text-sm">🔔 Thông Báo Đơn Hàng</span>
+                    <span className="text-xs bg-rose-50 text-rose-600 font-bold px-2 py-0.5 rounded-full">
+                      {activeOrders.filter((o) => o.status === "Chờ xác nhận").length} mới
+                    </span>
+                  </div>
+                  <div className="max-h-80 overflow-y-auto divide-y divide-slate-100">
+                    {orders.slice(0, 6).map((o) => (
+                      <div
+                        key={o.orderId}
+                        onClick={() => {
+                          setActiveTab("orders");
+                          setIsNotificationOpen(false);
+                        }}
+                        className="p-3 hover:bg-slate-50 cursor-pointer transition flex items-start gap-3"
+                      >
+                        <div className={`w-2.5 h-2.5 rounded-full mt-1.5 flex-shrink-0 ${
+                          o.status === "Chờ xác nhận" ? "bg-amber-500 animate-pulse" : "bg-emerald-500"
+                        }`} />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="font-black text-slate-900">#{o.orderId}</span>
+                            <span className="text-slate-400">{o.createdAt}</span>
+                          </div>
+                          <div className="text-xs text-slate-600 truncate">{o.customerInfo.fullName} • {o.totalAmount.toLocaleString("vi-VN")}đ</div>
+                          <div className="text-[11px] font-semibold text-rose-600 mt-0.5">{o.status}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="px-4 pt-2.5 border-t border-slate-100 text-center">
+                    <button
+                      onClick={() => {
+                        setActiveTab("orders");
+                        setIsNotificationOpen(false);
+                      }}
+                      className="text-xs font-bold text-rose-600 hover:underline"
+                    >
+                      Xem tất cả đơn hàng →
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
             <div className="text-right hidden sm:block">
               <div className="text-xs font-bold text-slate-900">Quản Trị Viên (Admin)</div>
               <div className="text-[11px] text-slate-400">admin@clothingshop.vn</div>

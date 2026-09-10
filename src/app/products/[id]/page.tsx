@@ -21,7 +21,7 @@ import {
 export default function ProductDetailPage() {
   const params = useParams();
   const productId = Number(params?.id);
-  const { addToCart, isWishlisted, toggleWishlist, showToast, products } = useShop();
+  const { addToCart, isWishlisted, toggleWishlist, showToast, products, user, addReview, getProductReviews } = useShop();
   const product = (products && products.length > 0 ? products : PRODUCTS).find((p) => p.id === productId) || PRODUCTS.find((p) => p.id === productId);
 
   const [quantity, setQuantity] = useState(1);
@@ -29,6 +29,10 @@ export default function ProductDetailPage() {
   const [selectedColor, setSelectedColor] = useState(product?.colors[0] || "Trắng");
   const [selectedImage, setSelectedImage] = useState(product?.imageUrl || "");
   const [activeTab, setActiveTab] = useState<"desc" | "reviews" | "shipping">("desc");
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewContent, setReviewContent] = useState("");
+  const [hoverRating, setHoverRating] = useState(0);
+
 
   if (!product) {
     return (
@@ -218,54 +222,61 @@ export default function ProductDetailPage() {
 
               {/* Quantity and Add to Cart */}
               <div className="space-y-4 pt-4 border-t border-slate-100">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center border border-slate-200 rounded-xl overflow-hidden h-12 bg-slate-50">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                  <div className="flex items-center gap-2.5">
+                    {/* Quantity Selector */}
+                    <div className="flex items-center border border-slate-200 rounded-xl overflow-hidden h-12 bg-slate-50 flex-1 sm:flex-initial">
+                      <button
+                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                        className="w-10 sm:w-11 h-full text-slate-600 hover:bg-slate-200 font-bold transition flex items-center justify-center text-lg"
+                      >
+                        -
+                      </button>
+                      <span className="w-10 sm:w-12 text-center font-bold text-sm text-slate-900">
+                        {quantity}
+                      </span>
+                      <button
+                        onClick={() => setQuantity(quantity + 1)}
+                        className="w-10 sm:w-11 h-full text-slate-600 hover:bg-slate-200 font-bold transition flex items-center justify-center text-lg"
+                      >
+                        +
+                      </button>
+                    </div>
+
+                    {/* Wishlist button */}
                     <button
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="w-11 h-full text-slate-600 hover:bg-slate-200 font-bold transition flex items-center justify-center text-lg"
+                      onClick={() => toggleWishlist(product.id)}
+                      className={`w-12 h-12 rounded-xl border flex items-center justify-center transition flex-shrink-0 ${
+                        isWishlisted(product.id)
+                          ? "border-rose-200 bg-rose-50 text-rose-600"
+                          : "border-slate-200 text-slate-600 hover:text-rose-600 hover:border-rose-200"
+                      }`}
+                      title="Yêu thích"
                     >
-                      -
+                      {isWishlisted(product.id) ? (
+                        <BiSolidHeart className="text-2xl text-rose-600" />
+                      ) : (
+                        <BiHeart className="text-2xl" />
+                      )}
                     </button>
-                    <span className="w-12 text-center font-bold text-sm text-slate-900">
-                      {quantity}
-                    </span>
+
+                    {/* Share button */}
                     <button
-                      onClick={() => setQuantity(quantity + 1)}
-                      className="w-11 h-full text-slate-600 hover:bg-slate-200 font-bold transition flex items-center justify-center text-lg"
+                      onClick={handleShare}
+                      className="w-12 h-12 rounded-xl border border-slate-200 text-slate-600 hover:text-slate-900 hover:border-slate-300 flex items-center justify-center transition flex-shrink-0"
+                      title="Chia sẻ"
                     >
-                      +
+                      <BiShareAlt className="text-xl" />
                     </button>
                   </div>
 
+                  {/* Add to cart main button */}
                   <button
                     onClick={handleAddToCart}
-                    className="flex-1 h-12 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl flex items-center justify-center gap-2 shadow-xl shadow-rose-600/30 transition transform hover:-translate-y-0.5"
+                    className="flex-1 h-12 px-6 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl flex items-center justify-center gap-2 shadow-xl shadow-rose-600/30 transition transform hover:-translate-y-0.5 whitespace-nowrap text-sm sm:text-base"
                   >
-                    <BiShoppingBag className="text-2xl" /> Thêm vào giỏ hàng
-                  </button>
-
-                  <button
-                    onClick={() => toggleWishlist(product.id)}
-                    className={`w-12 h-12 rounded-xl border flex items-center justify-center transition ${
-                      isWishlisted(product.id)
-                        ? "border-rose-200 bg-rose-50 text-rose-600"
-                        : "border-slate-200 text-slate-600 hover:text-rose-600 hover:border-rose-200"
-                    }`}
-                    title="Yêu thích"
-                  >
-                    {isWishlisted(product.id) ? (
-                      <BiSolidHeart className="text-2xl text-rose-600" />
-                    ) : (
-                      <BiHeart className="text-2xl" />
-                    )}
-                  </button>
-
-                  <button
-                    onClick={handleShare}
-                    className="w-12 h-12 rounded-xl border border-slate-200 text-slate-600 hover:text-slate-900 hover:border-slate-300 flex items-center justify-center transition"
-                    title="Chia sẻ"
-                  >
-                    <BiShareAlt className="text-xl" />
+                    <BiShoppingBag className="text-xl sm:text-2xl flex-shrink-0" />
+                    <span>Thêm vào giỏ hàng</span>
                   </button>
                 </div>
 
@@ -347,53 +358,139 @@ export default function ProductDetailPage() {
           </div>
         )}
 
-        {activeTab === "reviews" && (
-          <div className="space-y-4">
-            <div className="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl mb-6">
-              <div className="text-3xl font-black text-slate-900">{product.rating}</div>
-              <div>
-                <div className="flex text-amber-400 text-sm">
-                  {[...Array(5)].map((_, i) => (
-                    <BiStar key={i} />
-                  ))}
+        {activeTab === "reviews" && (() => {
+          const productReviews = getProductReviews(productId);
+          const allReviews = [
+            ...productReviews,
+            {
+              id: "static-1",
+              userName: "Hoàng Mai Linh",
+              rating: 5,
+              content: "Sản phẩm đẹp ngoài sức mong đợi, form may chuẩn, vải dày dặn mà mặc không bị nóng! Shop giao hàng đóng gói rất cẩn thận.",
+              createdAt: "2 ngày trước",
+            },
+            {
+              id: "static-2",
+              userName: "Trần Quốc Bảo",
+              rating: 5,
+              content: "Đã mua lần thứ 3 ở shop, lần nào cũng ưng ý hết. Mặc đi làm ai cũng khen lịch sự và sang trọng. Sẽ tiếp tục ủng hộ!",
+              createdAt: "1 tuần trước",
+            },
+          ];
+
+          const handleSubmitReview = (e: React.FormEvent) => {
+            e.preventDefault();
+            if (!reviewContent.trim()) {
+              showToast("Vui lòng nhập nội dung đánh giá!", "error");
+              return;
+            }
+            addReview(productId, reviewRating, reviewContent.trim());
+            setReviewContent("");
+            setReviewRating(5);
+          };
+
+          return (
+            <div className="space-y-6">
+              {/* Rating Summary */}
+              <div className="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl">
+                <div className="text-3xl font-black text-slate-900">{product.rating}</div>
+                <div>
+                  <div className="flex text-amber-400 text-sm">
+                    {[...Array(5)].map((_, i) => (
+                      <BiStar key={i} />
+                    ))}
+                  </div>
+                  <div className="text-xs text-slate-500">Dựa trên {product.reviewCount + productReviews.length} đánh giá từ người mua thực tế</div>
                 </div>
-                <div className="text-xs text-slate-500">Dựa trên {product.reviewCount} đánh giá từ người mua thực tế</div>
+              </div>
+
+              {/* Review Form */}
+              {user ? (
+                <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200">
+                  <h4 className="font-bold text-slate-900 text-sm mb-4">✍️ Viết đánh giá của bạn</h4>
+                  <form onSubmit={handleSubmitReview} className="space-y-4">
+                    {/* Star Rating */}
+                    <div>
+                      <label className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-2 block">Chất lượng sản phẩm</label>
+                      <div className="flex gap-1">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <button
+                            key={star}
+                            type="button"
+                            onClick={() => setReviewRating(star)}
+                            onMouseEnter={() => setHoverRating(star)}
+                            onMouseLeave={() => setHoverRating(0)}
+                            className="text-2xl transition-transform hover:scale-110"
+                          >
+                            <BiStar
+                              className={`${
+                                star <= (hoverRating || reviewRating)
+                                  ? "text-amber-400"
+                                  : "text-slate-300"
+                              } transition-colors`}
+                            />
+                          </button>
+                        ))}
+                        <span className="ml-2 text-xs text-slate-500 self-center">
+                          {["", "Rất tệ", "Tệ", "Bình thường", "Tốt", "Xuất sắc"][hoverRating || reviewRating]}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Review Content */}
+                    <div>
+                      <label className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-2 block">Nội dung đánh giá</label>
+                      <textarea
+                        value={reviewContent}
+                        onChange={(e) => setReviewContent(e.target.value)}
+                        placeholder="Chia sẻ trải nghiệm thực tế của bạn về sản phẩm (chất liệu, size, màu sắc, giao hàng...)..."
+                        rows={4}
+                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 resize-none focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition"
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="bg-rose-600 hover:bg-rose-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm transition shadow-lg shadow-rose-600/20"
+                    >
+                      Gửi đánh giá
+                    </button>
+                  </form>
+                </div>
+              ) : (
+                <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200 text-center">
+                  <p className="text-slate-500 text-sm mb-3">
+                    Bạn cần đăng nhập để có thể đánh giá sản phẩm
+                  </p>
+                  <Link
+                    href="/login"
+                    className="inline-flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white font-bold px-5 py-2.5 rounded-xl text-sm transition"
+                  >
+                    Đăng nhập để đánh giá
+                  </Link>
+                </div>
+              )}
+
+              {/* Reviews List */}
+              <div className="space-y-4">
+                {allReviews.map((review) => (
+                  <div key={review.id} className="border-b border-slate-100 pb-4 last:border-0">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="font-bold text-sm text-slate-900">{review.userName}</span>
+                      <span className="text-xs text-slate-400">{review.createdAt}</span>
+                    </div>
+                    <div className="flex text-amber-400 text-xs mb-1">
+                      {[...Array(review.rating)].map((_, i) => (
+                        <BiStar key={i} />
+                      ))}
+                    </div>
+                    <p className="text-slate-600 text-xs leading-relaxed">{review.content}</p>
+                  </div>
+                ))}
               </div>
             </div>
-
-            <div className="space-y-4">
-              <div className="border-b border-slate-100 pb-4">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="font-bold text-sm text-slate-900">Hoàng Mai Linh</span>
-                  <span className="text-xs text-slate-400">2 ngày trước</span>
-                </div>
-                <div className="flex text-amber-400 text-xs mb-1">
-                  {[...Array(5)].map((_, i) => (
-                    <BiStar key={i} />
-                  ))}
-                </div>
-                <p className="text-slate-600 text-xs leading-relaxed">
-                  Sản phẩm đẹp ngoài sức mong đợi, form may chuẩn, vải dày dặn mà mặc không bị nóng! Shop giao hàng đóng gói rất cẩn thận.
-                </p>
-              </div>
-
-              <div className="border-b border-slate-100 pb-4">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="font-bold text-sm text-slate-900">Trần Quốc Bảo</span>
-                  <span className="text-xs text-slate-400">1 tuần trước</span>
-                </div>
-                <div className="flex text-amber-400 text-xs mb-1">
-                  {[...Array(5)].map((_, i) => (
-                    <BiStar key={i} />
-                  ))}
-                </div>
-                <p className="text-slate-600 text-xs leading-relaxed">
-                  Đã mua lần thứ 3 ở shop, lần nào cũng ưng ý hết. Mặc đi làm ai cũng khen lịch sự và sang trọng. Sẽ tiếp tục ủng hộ!
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
+          );
+        })()}
 
         {activeTab === "shipping" && (
           <div className="text-slate-600 text-sm space-y-3 leading-relaxed">

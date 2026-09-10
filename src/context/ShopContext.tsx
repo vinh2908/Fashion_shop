@@ -41,6 +41,17 @@ export interface OrderItem {
   isArchived?: boolean;
 }
 
+export interface ReviewItem {
+  id: string;
+  productId: number;
+  userId: string;
+  userName: string;
+  rating: number;
+  content: string;
+  createdAt: string;
+  city?: string;
+}
+
 interface ShopContextType {
   // Cart
   cart: CartItem[];
@@ -71,6 +82,7 @@ interface ShopContextType {
   login: (email: string, pass: string) => boolean;
   register: (name: string, email: string, phone: string, pass: string) => boolean;
   logout: () => void;
+  updateProfile: (data: Partial<UserAccount>) => void;
 
   // Categories Management (Realtime sync with Admin)
   categories: CategoryItem[];
@@ -98,6 +110,11 @@ interface ShopContextType {
   updateOrderStatus: (orderId: string, status: OrderItem["status"]) => void;
   archiveOrder: (orderId: string) => void;
   restoreOrder: (orderId: string) => void;
+
+  // Reviews
+  reviews: ReviewItem[];
+  addReview: (productId: number, rating: number, content: string, city?: string) => void;
+  getProductReviews: (productId: number) => ReviewItem[];
 }
 
 const ShopContext = createContext<ShopContextType | undefined>(undefined);
@@ -172,7 +189,10 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
     if (typeof window === "undefined") return [];
     try {
       const saved = localStorage.getItem("fashion_orders");
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length >= 12) return parsed;
+      }
       return [
         {
           orderId: "FS-89234",
@@ -183,25 +203,218 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
             email: "nguyenvanan@gmail.com",
             address: "123 Cầu Giấy, Hà Nội",
           },
-          items: [
-            {
-              id: 1,
-              product: PRODUCTS[0],
-              quantity: 2,
-              size: "L",
-              color: "Trắng",
-            },
-          ],
+          items: [{ id: 1, product: PRODUCTS[0], quantity: 2, size: "L", color: "Trắng" }],
           totalAmount: 398000,
           status: "Đang giao",
           paymentMethod: "cod",
           isArchived: false,
+        },
+        {
+          orderId: "FS-95120",
+          createdAt: "10/09/2026",
+          customerInfo: {
+            fullName: "Trịnh Thùy Linh",
+            phone: "0918273645",
+            email: "thuylinh.trinh@gmail.com",
+            address: "15 Hùng Vương, Nha Trang, Khánh Hòa",
+          },
+          items: [
+            { id: 13, product: PRODUCTS[12] || PRODUCTS[0], quantity: 1, size: "M", color: "Trắng" },
+            { id: 24, product: PRODUCTS[23] || PRODUCTS[1], quantity: 1, size: "One Size", color: "Đen Nhám" },
+          ],
+          totalAmount: 588000,
+          status: "Chờ xác nhận",
+          paymentMethod: "card",
+          isArchived: false,
+        },
+        {
+          orderId: "FS-74521",
+          createdAt: "09/09/2026",
+          customerInfo: {
+            fullName: "Trần Thị Mai",
+            phone: "0987654321",
+            email: "tranthimai@gmail.com",
+            address: "45 Lê Lợi, TP. Hồ Chí Minh",
+          },
+          items: [
+            { id: 5, product: PRODUCTS[4], quantity: 1, size: "M", color: "Hồng Pastel" },
+            { id: 12, product: PRODUCTS[11], quantity: 1, size: "One Size", color: "Nâu Bò" },
+          ],
+          totalAmount: 988000,
+          status: "Thành công",
+          paymentMethod: "card",
+          isArchived: false,
+        },
+        {
+          orderId: "FS-83401",
+          createdAt: "09/09/2026",
+          customerInfo: {
+            fullName: "Ngô Quang Hải",
+            phone: "0981122334",
+            email: "hai.ngoquang@gmail.com",
+            address: "102 Trần Phú, TP. Vũng Tàu",
+          },
+          items: [
+            { id: 22, product: PRODUCTS[21] || PRODUCTS[6], quantity: 1, size: "L", color: "Đen Than" },
+            { id: 14, product: PRODUCTS[13] || PRODUCTS[3], quantity: 1, size: "L", color: "Đen" },
+          ],
+          totalAmount: 738000,
+          status: "Đang giao",
+          paymentMethod: "cod",
+          isArchived: false,
+        },
+        {
+          orderId: "FS-61830",
+          createdAt: "08/09/2026",
+          customerInfo: {
+            fullName: "Lê Quang Huy",
+            phone: "0901234567",
+            email: "lequanghuy@gmail.com",
+            address: "78 Nguyễn Trãi, Đà Nẵng",
+          },
+          items: [{ id: 3, product: PRODUCTS[2], quantity: 1, size: "30", color: "Xanh đậm" }],
+          totalAmount: 599000,
+          status: "Thành công",
+          paymentMethod: "cod",
+          isArchived: false,
+        },
+        {
+          orderId: "FS-76295",
+          createdAt: "08/09/2026",
+          customerInfo: {
+            fullName: "Bùi Thị Phương",
+            phone: "0933887766",
+            email: "phuongbui@gmail.com",
+            address: "28 Phan Chu Trinh, Huế",
+          },
+          items: [
+            { id: 21, product: PRODUCTS[20] || PRODUCTS[4], quantity: 1, size: "M", color: "Trắng Sữa" },
+          ],
+          totalAmount: 529000,
+          status: "Thành công",
+          paymentMethod: "card",
+          isArchived: false,
+        },
+        {
+          orderId: "FS-55290",
+          createdAt: "07/09/2026",
+          customerInfo: {
+            fullName: "Phạm Thu Hương",
+            phone: "0934567890",
+            email: "phamthuhuong@gmail.com",
+            address: "12 Hoàng Diệu, Huế",
+          },
+          items: [
+            { id: 8, product: PRODUCTS[7], quantity: 2, size: "FreeSize (<65kg)", color: "Tím Pastel" },
+          ],
+          totalAmount: 898000,
+          status: "Chờ xác nhận",
+          paymentMethod: "card",
+          isArchived: false,
+        },
+        {
+          orderId: "FS-69014",
+          createdAt: "07/09/2026",
+          customerInfo: {
+            fullName: "Dương Minh Tuấn",
+            phone: "0944556677",
+            email: "tuan.duong@gmail.com",
+            address: "89 Lý Thường Kiệt, Hà Nội",
+          },
+          items: [
+            { id: 23, product: PRODUCTS[22] || PRODUCTS[2], quantity: 1, size: "31", color: "Be Vàng" },
+          ],
+          totalAmount: 369000,
+          status: "Chờ xác nhận",
+          paymentMethod: "cod",
+          isArchived: false,
+        },
+        {
+          orderId: "FS-43187",
+          createdAt: "06/09/2026",
+          customerInfo: {
+            fullName: "Hoàng Đức Minh",
+            phone: "0967890123",
+            email: "hoangducminh@gmail.com",
+            address: "200 Bạch Đằng, Hải Phòng",
+          },
+          items: [
+            { id: 7, product: PRODUCTS[6], quantity: 1, size: "L", color: "Xanh Nhạt Bụi" },
+            { id: 4, product: PRODUCTS[3], quantity: 1, size: "L", color: "Đen" },
+          ],
+          totalAmount: 948000,
+          status: "Đang giao",
+          paymentMethod: "cod",
+          isArchived: false,
+        },
+        {
+          orderId: "FS-38640",
+          createdAt: "05/09/2026",
+          customerInfo: {
+            fullName: "Vũ Thị Lan",
+            phone: "0945678901",
+            email: "vuthilan@gmail.com",
+            address: "56 Đinh Tiên Hoàng, Hà Nội",
+          },
+          items: [{ id: 6, product: PRODUCTS[5], quantity: 1, size: "S", color: "Đỏ Đô" }],
+          totalAmount: 549000,
+          status: "Đã hủy",
+          paymentMethod: "cod",
+          isArchived: false,
+        },
+        {
+          orderId: "FS-29751",
+          createdAt: "04/09/2026",
+          customerInfo: {
+            fullName: "Đỗ Quốc Bảo",
+            phone: "0978901234",
+            email: "doquocbao@gmail.com",
+            address: "33 Nguyễn Văn Cừ, Cần Thơ",
+          },
+          items: [
+            { id: 2, product: PRODUCTS[1], quantity: 1, size: "XL", color: "Trắng" },
+            { id: 10, product: PRODUCTS[9], quantity: 1, size: "M", color: "Đen" },
+          ],
+          totalAmount: 788000,
+          status: "Thành công",
+          paymentMethod: "card",
+          isArchived: true,
+        },
+        {
+          orderId: "FS-18426",
+          createdAt: "03/09/2026",
+          customerInfo: {
+            fullName: "Nguyễn Thị Bích Ngọc",
+            phone: "0956789012",
+            email: "nguyenbichngoc@gmail.com",
+            address: "88 Lê Duẩn, Đà Nẵng",
+          },
+          items: [
+            { id: 9, product: PRODUCTS[8], quantity: 2, size: "S", color: "Trắng Sữa" },
+          ],
+          totalAmount: 698000,
+          status: "Thành công",
+          paymentMethod: "cod",
+          isArchived: true,
         },
       ];
     } catch {
       return [];
     }
   });
+
+  // Reviews State
+  const [reviews, setReviews] = useState<ReviewItem[]>(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      const saved = localStorage.getItem("fashion_reviews");
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+
 
   // --- MONGODB CLOUD REALTIME SYNC ---
   const fetchCloudData = async () => {
@@ -307,7 +520,13 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
     }
   }, [orders]);
 
-  // Toast Helpers
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("fashion_reviews", JSON.stringify(reviews));
+    }
+  }, [reviews]);
+
+
   const removeToast = (id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
@@ -436,7 +655,35 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
     showToast("Đã đăng xuất tài khoản", "info");
   };
 
-  // --- CATEGORIES MANAGEMENT ---
+  const updateProfile = (data: Partial<UserAccount>) => {
+    if (!user) return;
+    const updated = { ...user, ...data };
+    setUser(updated);
+    showToast("Đã cập nhật hồ sơ thành công!", "success");
+  };
+
+  // Reviews functions
+  const addReview = (productId: number, rating: number, content: string, city?: string) => {
+    if (!user) return;
+    const newReview: ReviewItem = {
+      id: `rev_${Date.now()}`,
+      productId,
+      userId: user.email,
+      userName: user.fullName,
+      rating,
+      content,
+      createdAt: new Date().toLocaleDateString("vi-VN"),
+      city: city || "Khách Hàng",
+    };
+    setReviews((prev) => [newReview, ...prev]);
+    showToast("Cảm ơn bạn đã gửi đánh giá!", "success");
+  };
+
+  const getProductReviews = (productId: number): ReviewItem[] => {
+    return reviews.filter((r) => r.productId === productId);
+  };
+
+
   const activeCategories = categories.filter((c) => !c.isArchived);
   const pinnedCategories = categories.filter((c) => !c.isArchived && c.isPinned);
   const archivedCategories = categories.filter((c) => c.isArchived);
@@ -706,6 +953,7 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
         login,
         register,
         logout,
+        updateProfile,
 
         // Categories
         categories,
@@ -733,6 +981,11 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
         updateOrderStatus,
         archiveOrder,
         restoreOrder,
+
+        // Reviews
+        reviews,
+        addReview,
+        getProductReviews,
       }}
     >
       {children}
