@@ -259,7 +259,6 @@ export default function CheckoutPage() {
                       required
                       value={formData.fullName}
                       onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                      placeholder="Nguyễn Văn A"
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-rose-500 focus:bg-white transition"
                     />
                   </div>
@@ -272,7 +271,6 @@ export default function CheckoutPage() {
                       required
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      placeholder="0912345678"
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-rose-500 focus:bg-white transition"
                     />
                   </div>
@@ -286,7 +284,6 @@ export default function CheckoutPage() {
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="email@example.com"
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-rose-500 focus:bg-white transition"
                   />
                 </div>
@@ -313,7 +310,7 @@ export default function CheckoutPage() {
                     rows={2}
                     value={formData.note}
                     onChange={(e) => setFormData({ ...formData, note: e.target.value })}
-                    placeholder="Ví dụ: Giao vào giờ hành chính, gọi trước khi giao..."
+                    placeholder="Giao vào giờ hành chính, gọi trước khi giao..."
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-rose-500 focus:bg-white transition"
                   />
                 </div>

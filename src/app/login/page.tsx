@@ -55,7 +55,6 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:bg-white text-sm transition outline-none"
-                placeholder="admin@homeliving.vn hoặc email của bạn"
               />
             </div>
           </div>
@@ -77,7 +76,6 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:bg-white text-sm transition outline-none"
-                placeholder="••••••••"
               />
             </div>
           </div>

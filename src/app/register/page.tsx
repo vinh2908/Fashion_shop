@@ -70,7 +70,6 @@ export default function RegisterPage() {
                   value={formData.fullName}
                   onChange={handleChange}
                   className="w-full pl-10 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:bg-white text-sm outline-none transition"
-                  placeholder="Nguyễn Văn A"
                 />
               </div>
             </div>
@@ -88,7 +87,6 @@ export default function RegisterPage() {
                   value={formData.phone}
                   onChange={handleChange}
                   className="w-full pl-10 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:bg-white text-sm outline-none transition"
-                  placeholder="0912345678"
                 />
               </div>
             </div>
@@ -107,7 +105,6 @@ export default function RegisterPage() {
                 value={formData.email}
                 onChange={handleChange}
                 className="w-full pl-10 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:bg-white text-sm outline-none transition"
-                placeholder="email@example.com"
               />
             </div>
           </div>
@@ -125,7 +122,6 @@ export default function RegisterPage() {
                 value={formData.password}
                 onChange={handleChange}
                 className="w-full pl-10 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:bg-white text-sm outline-none transition"
-                placeholder="••••••••"
               />
             </div>
           </div>
@@ -143,7 +139,6 @@ export default function RegisterPage() {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 className="w-full pl-10 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:bg-white text-sm outline-none transition"
-                placeholder="••••••••"
               />
             </div>
           </div>

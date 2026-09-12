@@ -574,7 +574,7 @@ export default function Home() {
             href="/products"
             className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl border-2 border-slate-900 text-slate-900 font-bold hover:bg-slate-900 hover:text-white transition text-xs sm:text-sm"
           >
-            Xem toàn bộ {PRODUCTS.length} sản phẩm <BiRightArrowAlt className="text-xl" />
+            Xem toàn bộ {allProducts.length} sản phẩm <BiRightArrowAlt className="text-xl" />
           </Link>
         </div>
       </section>
@@ -773,7 +773,7 @@ export default function Home() {
                   type="text"
                   value={reviewCity}
                   onChange={(e) => setReviewCity(e.target.value)}
-                  placeholder="Ví dụ: Hà Nội, TP. Hồ Chí Minh..."
+                  placeholder="Hà Nội, TP. Hồ Chí Minh..."
                   className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 transition"
                 />
               </div>

@@ -25,7 +25,7 @@ import {
 function ProductsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { addToCart, openQuickView, isWishlisted, toggleWishlist, showToast, pinnedCategories, products } = useShop();
+  const { addToCart, openQuickView, isWishlisted, toggleWishlist, showToast, activeCategories, products } = useShop();
 
   // Read URL parameters
   const initialCategory = Number(searchParams.get("cat")) || 0;
@@ -39,7 +39,7 @@ function ProductsContent() {
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState<boolean>(false);
 
   const allProducts = products && products.length > 0 ? products : PRODUCTS;
-  const allCategories = pinnedCategories && pinnedCategories.length > 0 ? pinnedCategories : CATEGORIES;
+  const allCategories = activeCategories && activeCategories.length > 0 ? activeCategories : CATEGORIES;
 
   // Filter and sort products
   const filteredProducts = useMemo(() => {

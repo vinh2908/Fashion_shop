@@ -128,19 +128,39 @@ function createToastId(): string {
   return `t_${Date.now()}_${toastIndex}`;
 }
 
-// Kiểm tra xem dữ liệu có phải là quần áo cũ không
+const REALTIME_CHANNEL = "homeliving_realtime_sync";
+
+function postRealtimeMessage(message: { type: string; payload?: unknown }) {
+  if (typeof window === "undefined") return;
+  try {
+    if ("BroadcastChannel" in window) {
+      const bc = new BroadcastChannel(REALTIME_CHANNEL);
+      bc.postMessage(message);
+      bc.close();
+    }
+  } catch {}
+}
+
+// Kiểm tra xem dữ liệu có phải là dữ liệu thời trang quần áo cũ không
 function isOldClothingList(items: unknown[]): boolean {
-  if (!Array.isArray(items) || items.length === 0) return true;
+  if (!Array.isArray(items) || items.length === 0) return false;
   return items.some((item) => {
     if (!item || typeof item !== "object") return false;
     const name = (item as { name?: string }).name || "";
     const catName = (item as { categoryName?: string }).categoryName || "";
     return (
-      name.includes("Áo") ||
-      name.includes("Quần") ||
-      name.includes("Váy") ||
-      catName.includes("thời trang") ||
-      catName.includes("Váy")
+      name.startsWith("Áo Thun") ||
+      name.startsWith("Áo Polo") ||
+      name.startsWith("Áo Sơ Mi") ||
+      name.startsWith("Quần Jean") ||
+      name.startsWith("Quần Kaki") ||
+      name.startsWith("Váy Hoa") ||
+      name.startsWith("Đầm ") ||
+      catName === "Thời trang nam" ||
+      catName === "Thời trang nữ" ||
+      catName === "Áo Nam" ||
+      catName === "Quần Nam" ||
+      catName === "Váy & Đầm"
     );
   });
 }
@@ -450,14 +470,23 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
   // --- MONGODB CLOUD REALTIME SYNC & AUTO-MIGRATION ---
   const fetchCloudData = async () => {
     try {
+      const timestamp = Date.now();
+      const fetchOpts: RequestInit = {
+        cache: "no-store",
+        headers: {
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+        },
+      };
+
       // 1. Đồng bộ Danh mục từ Cloud
-      const catRes = await fetch("/api/categories");
+      const catRes = await fetch(`/api/categories?t=${timestamp}`, fetchOpts);
       if (catRes.ok) {
         const catJson = await catRes.json();
         if (catJson.success && Array.isArray(catJson.data) && catJson.data.length > 0) {
           if (isOldClothingList(catJson.data)) {
             // Tự động kích hoạt reset sang đồ gia dụng trên cloud
-            await fetch("/api/categories?reset=true");
+            await fetch("/api/categories?reset=true", fetchOpts);
             setCategories(CATEGORIES);
           } else {
             setCategories(catJson.data);
@@ -469,13 +498,13 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
       }
 
       // 2. Đồng bộ Sản phẩm từ Cloud
-      const prodRes = await fetch("/api/products");
+      const prodRes = await fetch(`/api/products?t=${timestamp}`, fetchOpts);
       if (prodRes.ok) {
         const prodJson = await prodRes.json();
         if (prodJson.success && Array.isArray(prodJson.data) && prodJson.data.length > 0) {
           if (isOldClothingList(prodJson.data)) {
             // Tự động kích hoạt reset sang đồ gia dụng trên cloud
-            await fetch("/api/products?reset=true");
+            await fetch("/api/products?reset=true", fetchOpts);
             setProducts(PRODUCTS);
           } else {
             setProducts(prodJson.data);
@@ -487,7 +516,7 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
       }
 
       // 3. Đồng bộ Đơn hàng từ Cloud
-      const orderRes = await fetch("/api/orders");
+      const orderRes = await fetch(`/api/orders?t=${timestamp}`, fetchOpts);
       if (orderRes.ok) {
         const orderJson = await orderRes.json();
         if (orderJson.success && Array.isArray(orderJson.data)) {
@@ -503,21 +532,81 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    // Tải dữ liệu đám mây không đồng bộ
+    // 1. Tải dữ liệu đám mây lần đầu
     const timer = setTimeout(() => {
       fetchCloudData();
-    }, 100);
+    }, 50);
 
-    // Tự động kiểm tra và đồng bộ thời gian thực mỗi 4 giây
-    const interval = setInterval(fetchCloudData, 4000);
+    // 2. Tự động kiểm tra và đồng bộ thời gian thực từ Cloud mỗi 3 giây
+    const interval = setInterval(fetchCloudData, 3000);
 
+    // 3. Đồng bộ tức thì khi tab nhận focus hoặc hiển thị trở lại
     const handleFocus = () => fetchCloudData();
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        fetchCloudData();
+      }
+    };
+    const handleOnline = () => fetchCloudData();
+
     window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("online", handleOnline);
+
+    // 4. Lắng nghe BroadcastChannel để đồng bộ tức thì (0ms) giữa các tab cùng trình duyệt
+    let bc: BroadcastChannel | null = null;
+    if (typeof window !== "undefined" && "BroadcastChannel" in window) {
+      try {
+        bc = new BroadcastChannel(REALTIME_CHANNEL);
+        bc.onmessage = (event) => {
+          const { type, payload } = event.data || {};
+          if (type === "SYNC_PRODUCTS" && Array.isArray(payload)) {
+            setProducts(payload as ProductItem[]);
+          } else if (type === "SYNC_CATEGORIES" && Array.isArray(payload)) {
+            setCategories(payload as CategoryItem[]);
+          } else if (type === "SYNC_ORDERS" && Array.isArray(payload)) {
+            setOrders(payload as OrderItem[]);
+          } else if (type === "FULL_RESET" && payload) {
+            const p = payload as { categories?: CategoryItem[]; products?: ProductItem[] };
+            if (p.categories) setCategories(p.categories);
+            if (p.products) setProducts(p.products);
+          } else if (type === "REFRESH_ALL") {
+            fetchCloudData();
+          }
+        };
+      } catch {}
+    }
+
+    // 5. Lắng nghe storage event từ các tab khác
+    const handleStorage = (e: StorageEvent) => {
+      if (!e.key || !e.newValue) return;
+      try {
+        if (e.key === "fashion_products") {
+          const parsed = JSON.parse(e.newValue);
+          if (Array.isArray(parsed)) setProducts(parsed);
+        } else if (e.key === "fashion_categories") {
+          const parsed = JSON.parse(e.newValue);
+          if (Array.isArray(parsed)) setCategories(parsed);
+        } else if (e.key === "fashion_orders") {
+          const parsed = JSON.parse(e.newValue);
+          if (Array.isArray(parsed)) setOrders(parsed);
+        }
+      } catch {}
+    };
+    window.addEventListener("storage", handleStorage);
 
     return () => {
       clearTimeout(timer);
       clearInterval(interval);
       window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("storage", handleStorage);
+      if (bc) {
+        try {
+          bc.close();
+        } catch {}
+      }
     };
   }, []);
 
@@ -584,13 +673,14 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
   // Reset to Home Appliance Data
   const resetToHomeApplianceData = async () => {
     try {
-      await fetch("/api/categories?reset=true");
-      await fetch("/api/products?reset=true");
+      await fetch("/api/categories?reset=true", { cache: "no-store" });
+      await fetch("/api/products?reset=true", { cache: "no-store" });
     } catch (err) {
       console.error("Cloud reset failed:", err);
     }
     setCategories(CATEGORIES);
     setProducts(PRODUCTS);
+    postRealtimeMessage({ type: "FULL_RESET", payload: { categories: CATEGORIES, products: PRODUCTS } });
     try {
       localStorage.setItem("fashion_categories", JSON.stringify(CATEGORIES));
       localStorage.setItem("fashion_products", JSON.stringify(PRODUCTS));
@@ -727,7 +817,9 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
       description: cat.description || "",
     };
 
-    setCategories((prev) => [...prev, newCat]);
+    const nextCategories = [...categories, newCat];
+    setCategories(nextCategories);
+    postRealtimeMessage({ type: "SYNC_CATEGORIES", payload: nextCategories });
     showToast(`Đã thêm danh mục "${cat.name}" thành công!`, "success");
 
     try {
@@ -740,7 +832,9 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
   };
 
   const updateCategory = async (id: number, cat: Partial<CategoryItem>) => {
-    setCategories((prev) => prev.map((c) => (c.id === id ? { ...c, ...cat } : c)));
+    const nextCategories = categories.map((c) => (c.id === id ? { ...c, ...cat } : c));
+    setCategories(nextCategories);
+    postRealtimeMessage({ type: "SYNC_CATEGORIES", payload: nextCategories });
     showToast("Đã cập nhật danh mục!", "success");
 
     try {
@@ -753,7 +847,9 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
   };
 
   const deleteCategory = async (id: number) => {
-    setCategories((prev) => prev.filter((c) => c.id !== id));
+    const nextCategories = categories.filter((c) => c.id !== id);
+    setCategories(nextCategories);
+    postRealtimeMessage({ type: "SYNC_CATEGORIES", payload: nextCategories });
     showToast("Đã xóa vĩnh viễn danh mục!", "info");
 
     try {
@@ -765,7 +861,9 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
     const target = categories.find((c) => c.id === id);
     if (!target) return;
     const newPinned = !target.isPinned;
-    setCategories((prev) => prev.map((c) => (c.id === id ? { ...c, isPinned: newPinned } : c)));
+    const nextCategories = categories.map((c) => (c.id === id ? { ...c, isPinned: newPinned } : c));
+    setCategories(nextCategories);
+    postRealtimeMessage({ type: "SYNC_CATEGORIES", payload: nextCategories });
     showToast(newPinned ? "Đã ghim danh mục lên thanh điều hướng" : "Đã bỏ ghim danh mục", "info");
 
     try {
@@ -778,7 +876,9 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
   };
 
   const archiveCategory = async (id: number) => {
-    setCategories((prev) => prev.map((c) => (c.id === id ? { ...c, isArchived: true } : c)));
+    const nextCategories = categories.map((c) => (c.id === id ? { ...c, isArchived: true } : c));
+    setCategories(nextCategories);
+    postRealtimeMessage({ type: "SYNC_CATEGORIES", payload: nextCategories });
     showToast("Đã chuyển danh mục vào lưu trữ", "info");
 
     try {
@@ -791,7 +891,9 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
   };
 
   const restoreCategory = async (id: number) => {
-    setCategories((prev) => prev.map((c) => (c.id === id ? { ...c, isArchived: false } : c)));
+    const nextCategories = categories.map((c) => (c.id === id ? { ...c, isArchived: false } : c));
+    setCategories(nextCategories);
+    postRealtimeMessage({ type: "SYNC_CATEGORIES", payload: nextCategories });
     showToast("Đã khôi phục danh mục hoạt động", "success");
 
     try {
@@ -816,7 +918,9 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
       sizes: prod.sizes && prod.sizes.length > 0 ? prod.sizes : ["Tiêu chuẩn"],
     };
 
-    setProducts((prev) => [newProduct, ...prev]);
+    const nextProducts = [newProduct, ...products];
+    setProducts(nextProducts);
+    postRealtimeMessage({ type: "SYNC_PRODUCTS", payload: nextProducts });
     showToast(`Đã thêm sản phẩm "${prod.name}" thành công!`, "success");
 
     try {
@@ -829,7 +933,9 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
   };
 
   const updateProduct = async (id: number, prod: Partial<ProductItem>) => {
-    setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, ...prod } : p)));
+    const nextProducts = products.map((p) => (p.id === id ? { ...p, ...prod } : p));
+    setProducts(nextProducts);
+    postRealtimeMessage({ type: "SYNC_PRODUCTS", payload: nextProducts });
     showToast("Đã cập nhật thông tin sản phẩm!", "success");
 
     try {
@@ -842,7 +948,9 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
   };
 
   const deleteProduct = async (id: number) => {
-    setProducts((prev) => prev.filter((p) => p.id !== id));
+    const nextProducts = products.filter((p) => p.id !== id);
+    setProducts(nextProducts);
+    postRealtimeMessage({ type: "SYNC_PRODUCTS", payload: nextProducts });
     showToast("Đã xóa sản phẩm khỏi hệ thống!", "info");
 
     try {
@@ -871,7 +979,9 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
       isArchived: false,
     };
 
-    setOrders((prev) => [newOrder, ...prev]);
+    const nextOrders = [newOrder, ...orders];
+    setOrders(nextOrders);
+    postRealtimeMessage({ type: "SYNC_ORDERS", payload: nextOrders });
     clearCart();
     showToast(`Đặt hàng thành công! Mã đơn hàng: #${orderId}`, "success");
 
@@ -888,7 +998,9 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
   };
 
   const updateOrderStatus = async (orderId: string, status: OrderItem["status"]) => {
-    setOrders((prev) => prev.map((o) => (o.orderId === orderId ? { ...o, status } : o)));
+    const nextOrders = orders.map((o) => (o.orderId === orderId ? { ...o, status } : o));
+    setOrders(nextOrders);
+    postRealtimeMessage({ type: "SYNC_ORDERS", payload: nextOrders });
     showToast(`Đã cập nhật trạng thái đơn hàng #${orderId} thành: ${status}`, "info");
 
     try {
@@ -901,7 +1013,9 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
   };
 
   const archiveOrder = async (orderId: string) => {
-    setOrders((prev) => prev.map((o) => (o.orderId === orderId ? { ...o, isArchived: true } : o)));
+    const nextOrders = orders.map((o) => (o.orderId === orderId ? { ...o, isArchived: true } : o));
+    setOrders(nextOrders);
+    postRealtimeMessage({ type: "SYNC_ORDERS", payload: nextOrders });
     showToast(`Đã chuyển đơn hàng #${orderId} vào lưu trữ`, "info");
 
     try {
@@ -914,7 +1028,9 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
   };
 
   const restoreOrder = async (orderId: string) => {
-    setOrders((prev) => prev.map((o) => (o.orderId === orderId ? { ...o, isArchived: false } : o)));
+    const nextOrders = orders.map((o) => (o.orderId === orderId ? { ...o, isArchived: false } : o));
+    setOrders(nextOrders);
+    postRealtimeMessage({ type: "SYNC_ORDERS", payload: nextOrders });
     showToast(`Đã khôi phục đơn hàng #${orderId}`, "success");
 
     try {

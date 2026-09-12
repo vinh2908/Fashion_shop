@@ -3,6 +3,15 @@ import connectToDatabase from '@/lib/mongodb';
 import { Category } from '@/models/Category';
 import { CATEGORIES } from '@/data/products';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+const NO_CACHE_HEADERS = {
+  'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+  Pragma: 'no-cache',
+  Expires: '0',
+};
+
 function getErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
   return String(error);
@@ -36,13 +45,13 @@ export async function GET(req: Request) {
       items = await Category.find({}).sort({ id: 1 }).lean();
     }
 
-    return NextResponse.json({ success: true, data: items });
+    return NextResponse.json({ success: true, data: items }, { headers: NO_CACHE_HEADERS });
   } catch (error: unknown) {
     const msg = getErrorMessage(error);
     console.error('Error fetching categories from MongoDB:', msg);
     return NextResponse.json(
       { success: false, message: msg, data: CATEGORIES },
-      { status: 500 }
+      { status: 500, headers: NO_CACHE_HEADERS }
     );
   }
 }

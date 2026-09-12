@@ -23,11 +23,12 @@ export default function ProductDetailPage() {
   const params = useParams();
   const productId = Number(params?.id);
   const { addToCart, isWishlisted, toggleWishlist, showToast, products, user, addReview, getProductReviews } = useShop();
-  const product = (products && products.length > 0 ? products : PRODUCTS).find((p) => p.id === productId) || PRODUCTS.find((p) => p.id === productId);
+  const allProducts = products && products.length > 0 ? products : PRODUCTS;
+  const product = allProducts.find((p) => p.id === productId) || PRODUCTS.find((p) => p.id === productId);
 
   const [quantity, setQuantity] = useState(1);
-  const [selectedSize, setSelectedSize] = useState(product?.sizes[0] || "M");
-  const [selectedColor, setSelectedColor] = useState(product?.colors[0] || "Trắng");
+  const [selectedSize, setSelectedSize] = useState(product?.sizes?.[0] || "Tiêu chuẩn");
+  const [selectedColor, setSelectedColor] = useState(product?.colors?.[0] || "Trắng");
   const [selectedImage, setSelectedImage] = useState(product?.imageUrl || "");
   const [activeTab, setActiveTab] = useState<"desc" | "reviews" | "shipping">("desc");
   const [reviewRating, setReviewRating] = useState(5);
@@ -50,7 +51,7 @@ export default function ProductDetailPage() {
     );
   }
 
-  const relatedProducts = PRODUCTS.filter(
+  const relatedProducts = allProducts.filter(
     (p) => p.category === product.category && p.id !== product.id
   ).slice(0, 4);
 
@@ -444,7 +445,7 @@ export default function ProductDetailPage() {
                       <textarea
                         value={reviewContent}
                         onChange={(e) => setReviewContent(e.target.value)}
-                        placeholder="Chia sẻ trải nghiệm thực tế của bạn về sản phẩm (chất liệu, size, màu sắc, giao hàng...)..."
+                        placeholder="Chia sẻ trải nghiệm thực tế của bạn về sản phẩm (tính năng, độ bền, thiết kế, đóng gói, giao hàng...)..."
                         rows={4}
                         className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 resize-none focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition"
                       />

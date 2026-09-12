@@ -106,7 +106,7 @@ export default function OrderHistoryPage() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Tìm theo mã đơn (FS-...)..."
+            placeholder="Tìm theo mã đơn (HL-...)..."
             className="w-full bg-white border border-slate-200 rounded-xl pl-9 pr-4 py-2.5 text-xs focus:outline-none focus:border-rose-500 transition shadow-sm"
           />
           <BiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-base" />
@@ -451,7 +451,6 @@ export default function OrderHistoryPage() {
                   value={profileForm.phone}
                   onChange={(e) => setProfileForm((p) => ({ ...p, phone: e.target.value }))}
                   className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 transition"
-                  placeholder="0912 345 678"
                 />
               </div>
 

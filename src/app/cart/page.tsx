@@ -255,7 +255,7 @@ export default function CartPage() {
                     type="text"
                     value={voucherCode}
                     onChange={(e) => setVoucherCode(e.target.value)}
-                    placeholder="Nhập mã FASHION10"
+                    placeholder="Nhập mã GIADUNG10"
                     className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono font-bold uppercase focus:outline-none focus:border-rose-500"
                   />
                   <button

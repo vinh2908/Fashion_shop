@@ -15,7 +15,7 @@ export default function QuickViewModal() {
 
   if (!quickViewProduct) return null;
 
-  const activeSize = selectedSize || quickViewProduct.sizes[0] || "M";
+  const activeSize = selectedSize || quickViewProduct.sizes[0] || "Tiêu chuẩn";
   const activeColor = selectedColor || quickViewProduct.colors[0] || "Trắng";
 
   const handleAddToCart = () => {

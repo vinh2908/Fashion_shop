@@ -19,6 +19,7 @@ import {
   BiEdit,
   BiSearch,
   BiStore,
+  BiHome,
   BiCategory,
   BiSolidBolt,
   BiArchive,
@@ -79,8 +80,11 @@ export default function AdminDashboard() {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined" && window.innerWidth >= 768) {
-      setSidebarOpen(true);
+    if (typeof window !== "undefined") {
+      document.title = "HomeLiving Admin - Quản Trị Hệ Thống";
+      if (window.innerWidth >= 768) {
+        setSidebarOpen(true);
+      }
     }
   }, []);
 
@@ -141,7 +145,7 @@ export default function AdminDashboard() {
     {
       id: 1,
       fullName: "Quản trị viên",
-      email: "admin@clothingshop.vn",
+      email: "admin@homeliving.vn",
       phone: "0900000000",
       role: "Admin",
       status: "Hoạt động",
@@ -239,7 +243,7 @@ export default function AdminDashboard() {
         gallery: [productForm.imageUrl],
         description: productForm.description,
         colors: ["Trắng", "Đen"],
-        sizes: ["S", "M", "L"],
+        sizes: ["Tiêu chuẩn", "Cao cấp"],
         isFlashSale: productForm.isFlashSale,
         soldPercentage: 0,
       });
@@ -374,11 +378,11 @@ export default function AdminDashboard() {
         <div className="p-5 flex items-center justify-between border-b border-slate-800">
           <Link href="/" className="flex items-center gap-2.5 font-black text-lg text-white">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-rose-500 to-rose-700 flex items-center justify-center text-white text-xl shadow-lg shadow-rose-600/30">
-              <BiStore />
+              <BiHome />
             </div>
             {isSidebarOpen && (
               <span className="tracking-tight">
-                Fashion<span className="text-rose-500">Admin</span>
+                Home<span className="text-rose-500">Living</span> Admin
               </span>
             )}
           </Link>
@@ -581,7 +585,7 @@ export default function AdminDashboard() {
 
             <div className="text-right hidden sm:block">
               <div className="text-xs font-bold text-slate-900">Quản Trị Viên (Admin)</div>
-              <div className="text-[11px] text-slate-400">admin@clothingshop.vn</div>
+              <div className="text-[11px] text-slate-400">admin@homeliving.vn</div>
             </div>
             <div className="w-10 h-10 rounded-xl bg-rose-600 text-white font-black flex items-center justify-center text-sm shadow-md shadow-rose-600/30">
               AD
@@ -1344,7 +1348,6 @@ export default function AdminDashboard() {
                     required
                     value={productForm.name}
                     onChange={(e) => setProductForm({ ...productForm, name: e.target.value })}
-                    placeholder="Ví dụ: Áo Sơ Mi Nam Oxford"
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-rose-500 focus:bg-white transition"
                   />
                 </div>
@@ -1517,7 +1520,6 @@ export default function AdminDashboard() {
                     required
                     value={categoryForm.name}
                     onChange={(e) => setCategoryForm({ ...categoryForm, name: e.target.value })}
-                    placeholder="Ví dụ: Giày & Dép"
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-rose-500 focus:bg-white transition"
                   />
                 </div>
